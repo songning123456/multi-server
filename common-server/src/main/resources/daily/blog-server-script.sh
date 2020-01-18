@@ -1,5 +1,5 @@
 #!/bin/sh
-rm -rf blog-0.0.1-SNAPSHOT.jar
+rm -rf blog-server-1.0-SNAPSHOT.jar
 rz
 docker stop blog-server_container
 docker rm blog-server_container

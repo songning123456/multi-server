@@ -57,7 +57,7 @@
     # 基础镜像使用java
     FROM java:8
     # 将jar包复制到容器中的/blog-server目录下，并更名为simple-blog-server.jar
-    COPY xxx.jar /blog-server/simple-blog-server.jar
+    COPY blog-server-1.0-SNAPSHOT.jar /blog-server/simple-blog-server.jar
     #对外端口
     EXPOSE 8072
     #执行命令 java -jar simple-blog-server.jar
@@ -125,9 +125,9 @@
 ### 重新部署
 * 重新部署blog-server
   ```
-  * rm -rf blog-0.0.1-SNAPSHOT.jar
+  * rm -rf blog-server-1.0-SNAPSHOT.jar
   * maven clean install
-  * rz blog-0.0.1-SNAPSHOT.jar
+  * rz blog-server-1.0-SNAPSHOT.jar
   * docker stop blog-server_container
   * docker rm container_id
   * 构建镜像，启动容器(镜像版本号依次增加)
