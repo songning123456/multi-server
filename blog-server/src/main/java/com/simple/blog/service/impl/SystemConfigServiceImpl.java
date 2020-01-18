@@ -54,7 +54,7 @@ public class SystemConfigServiceImpl implements SystemConfigService {
             commonDTO.setMessage("token无效,请重新登陆");
             return commonDTO;
         }
-        Sort sort = new Sort(Sort.Direction.ASC, "configKey");
+        Sort sort = Sort.by(Sort.Direction.ASC, "configKey");
         Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
         Specification specification = (Specification) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicateList = new ArrayList<>();

@@ -61,7 +61,7 @@ public class MysqlBlogServiceImpl implements BlogService {
         Integer recordStartNo = commonVO.getRecordStartNo();
         Integer pageRecordNum = commonVO.getPageRecordNum();
         String kinds = commonVO.getCondition().getKinds();
-        Sort sort = new Sort(Sort.Direction.DESC, "update_time");
+        Sort sort = Sort.by(Sort.Direction.DESC, "update_time");
         Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
         Page<Map<String, Object>> blogPage = blogRepository.findAbstract(kinds, pageable);
         List<Map<String, Object>> src = blogPage.getContent();
@@ -92,7 +92,7 @@ public class MysqlBlogServiceImpl implements BlogService {
         String userId = usersRepository.findUserIdByNameNative(username);
         Integer recordStartNo = commonVO.getRecordStartNo();
         Integer pageRecordNum = commonVO.getPageRecordNum();
-        Sort sort = new Sort(Sort.Direction.DESC, "update_time");
+        Sort sort = Sort.by(Sort.Direction.DESC, "update_time");
         Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
         Page<Map<String, Object>> blogPage = blogRepository.findByUserIdNative(userId, pageable);
         List<Map<String, Object>> src = blogPage.getContent();
@@ -128,7 +128,7 @@ public class MysqlBlogServiceImpl implements BlogService {
         }
         Integer recordStartNo = commonVO.getRecordStartNo();
         Integer pageRecordNum = commonVO.getPageRecordNum();
-        Sort sort = new Sort(Sort.Direction.DESC, "update_time");
+        Sort sort = Sort.by(Sort.Direction.DESC, "update_time");
         Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
         Page<Map<String, Object>> blogPage = blogRepository.findByIdNative(articleIds, pageable);
         List<Map<String, Object>> src = blogPage.getContent();
@@ -189,7 +189,7 @@ public class MysqlBlogServiceImpl implements BlogService {
         String content = commonVO.getCondition().getContent();
         Integer recordStartNo = commonVO.getRecordStartNo();
         Integer pageRecordNum = commonVO.getPageRecordNum();
-        Sort sort = new Sort(Sort.Direction.DESC, "update_time");
+        Sort sort = Sort.by(Sort.Direction.DESC, "update_time");
         Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
         List<Map<String, Object>> list = blogRepository.findByLikeContentNative(content, pageable);
         List<BlogDTO> blogDTOS = new ArrayList<>();

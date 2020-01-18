@@ -84,7 +84,7 @@ public class HistoryServiceImpl implements HistoryService {
             commonDTO.setMessage("token无效,请重新登陆");
             return commonDTO;
         }
-        Sort sort = new Sort(Sort.Direction.DESC, "time");
+        Sort sort = Sort.by(Sort.Direction.DESC, "time");
         Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
         Page<History> historyPage = historyRepository.findHistoryNative(username, pageable);
         List<History> list = historyPage.getContent();
