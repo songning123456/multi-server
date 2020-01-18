@@ -11,6 +11,7 @@
 
     <artifactId>blog-server</artifactId>
 
+    <!--启动main函数必须-->
     <build>
         <plugins>
             <plugin>
