@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 @EnableJpaAuditing
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@SpringBootApplication(scanBasePackages = {"com.simple.blog.**", "com.sn.common.**"})
+@SpringBootApplication(scanBasePackages = {"com.simple.blog.**", "com.sn.common.**", "com.sleepy.jpql"})
 @EnableFeignClients(basePackages = {"com.simple.blog.feign"})
 public class BlogApplication {
 

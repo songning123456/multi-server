@@ -9,6 +9,7 @@ newsCrawler => https://github.com/gx304419380/NewsCrawler
 linux如何创建shell脚本并执行 => https://jingyan.baidu.com/article/84b4f5655e1d4d60f6da3236.html
 docker java 应用日志时间与系统不一致的问题 => https://blog.csdn.net/Viogs/article/details/85273193
 一款很好用的内网穿透工具--FRP => https://www.jianshu.com/p/00c79df1aaf0
+使用 docker 运行 frp 服务端，并且上传到 docker hub 在线仓库 => https://yq.aliyun.com/articles/705249?do=login&spm=5176.12901015.0.i12901015.502f525cVuMYNh
 SpringBoot上传文件到七牛云 => https://juejin.im/post/5df9a10df265da33ba5a871d
 Vue + Java 实现QQ第三方登录授权 => https://blog.csdn.net/qq_38225558/article/details/101129017
 oAuth 2.0 第三方登录详细介绍(github) => https://blog.csdn.net/weixin_34162228/article/details/91540717; https://blog.csdn.net/weixin_37677804/article/details/78475297; https://www.jianshu.com/p/ff779c7a39c0
@@ -18,3 +19,6 @@ oAuth 2.0 第三方登录详细介绍(github) => https://blog.csdn.net/weixin_34
 教你如何上传项目到GitHub => https://www.cnblogs.com/zouwangblog/p/11201561.html
 idea Failed to clean project Failed to delete target => https://blog.csdn.net/qq_25384945/article/details/86003803
 Vultr搭建ShadowSocks教程 => https://github.com/SleepyOcean/articles/blob/master/%E5%A4%A7%E5%AD%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%8A%80%E6%9C%AF%E6%95%99%E7%A8%8B%E8%AE%B0%E5%BD%95/Vultr%E6%90%AD%E5%BB%BAShadowSocks%E6%95%99%E7%A8%8B.md
+Docker使用阿里云镜像加速: https://www.cnblogs.com/ianduin/p/8678922.html
+用 Docker 搭建自己的 Shadowsocks 服务器 => http://www.seaxiang.com/blog/docker_shadowsocks
+Docker 部署 Spring initializr => https://www.jianshu.com/p/ca3058135fb1

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jpa module="testJpql">
+    <jpql id="customSQL" resultClass="java.util.HashMap" native="true">
+        select * from blog where 1=1
+        limit 10
+    </jpql>
+</jpa>
