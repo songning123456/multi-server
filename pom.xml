@@ -20,6 +20,7 @@
         <module>blog-server</module>
         <module>common-server</module>
         <module>blog-es-server</module>
+        <module>jpql-server</module>
     </modules>
 
     <!--maven 默认使用Java5,设置成Java8-->

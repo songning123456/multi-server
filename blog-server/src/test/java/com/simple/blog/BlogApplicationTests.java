@@ -1,8 +1,8 @@
 package com.simple.blog;
 
 
-import com.sleepy.jpql.JpqlParser;
-import com.sleepy.jpql.ParserParameter;
+import com.sn.jpql.JpqlParser;
+import com.sn.jpql.ParserParameter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
