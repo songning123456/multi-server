@@ -21,7 +21,6 @@ public class MemoryApplicationRunner implements ApplicationRunner {
     private CacheService cacheService;
 
     @Override
-    @Async
     public void run(ApplicationArguments arguments) {
         cacheService.refreshLabelConfig();
         log.info("^^^^^缓存memory成功^^^^^");
