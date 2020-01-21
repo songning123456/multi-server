@@ -1,9 +1,8 @@
 package com.sn.common.util;
 
-import com.sn.common.annotation.ClassConvertIgnore;
+import com.sn.common.util.classconvert.ClassConvertContext;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -24,19 +23,24 @@ public class ClassConvertUtil {
         // 获取当前类定义的所有方法，不包括父类和接口的
         Method[] srcMethods = src.getClass().getDeclaredMethods();
         Method[] targetMethods = target.getClass().getDeclaredMethods();
+
         for (Method srcMethod : srcMethods) {
             String srcMethodName = srcMethod.getName();
             if (srcMethodName.startsWith("get")) {
                 try {
                     Object result = srcMethod.invoke(src);
-                    String fieldName = srcMethodName.substring(3, 4).toLowerCase() + srcMethodName.substring(4);
-                    Field field = src.getClass().getDeclaredField(fieldName);
-                    ClassConvertIgnore classConvertIgnore = field.getAnnotation(ClassConvertIgnore.class);
+                    // 获取 get 方法返回值类型
+                    Class<?> srcConvertClass = srcMethod.getReturnType();
+
                     for (Method targetMethod : targetMethods) {
                         String targetMethodName = targetMethod.getName();
-
-                        if (classConvertIgnore == null && targetMethodName.startsWith("set") && targetMethodName.substring(3)
-                                .equals(srcMethodName.substring(3))) {
+                        if (targetMethodName.startsWith("set") && targetMethodName.substring(3).equals(srcMethodName.substring(3))) {
+                            // 获取 set 方法 参数类型
+                            Class<?> targetConvertClass = targetMethod.getParameterTypes()[0];
+                            // 执行 类型转化
+                            if (result != null && srcConvertClass != targetConvertClass) {
+                                result = ClassConvertContext.getInstance(srcConvertClass, targetConvertClass).classConvert(result);
+                            }
                             targetMethod.invoke(target, result);
                         }
                     }

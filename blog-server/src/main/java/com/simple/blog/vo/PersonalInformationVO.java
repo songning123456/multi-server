@@ -1,6 +1,5 @@
 package com.simple.blog.vo;
 
-import com.sn.common.annotation.ClassConvertIgnore;
 import lombok.Data;
 
 /**
@@ -18,10 +17,8 @@ public class PersonalInformationVO {
 
     private String introduction;
 
-    @ClassConvertIgnore
     private String startTime;
 
-    @ClassConvertIgnore
     private String endTime;
 
     private String userId;
