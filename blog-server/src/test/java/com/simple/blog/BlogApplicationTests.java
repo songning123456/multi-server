@@ -1,5 +1,6 @@
 package com.simple.blog;
 
+import com.simple.blog.entity.Blog;
 import com.sn.jpql.JpqlParser;
 import com.sn.jpql.ParserParameter;
 import lombok.extern.slf4j.Slf4j;
@@ -10,8 +11,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.sql.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -27,6 +31,10 @@ public class BlogApplicationTests {
     @Autowired
     private JpqlParser jpqlParser;
 
+    //注入的是实体管理器,执行持久化操作
+    @PersistenceContext
+    EntityManager entityManager;
+
     /**
      * 测试jpql是否可用
      */
@@ -35,23 +43,7 @@ public class BlogApplicationTests {
         Map<String, Object> params = new HashMap<>(4);
         params.put("author", "凌晨");
         String sql = jpqlParser.parse(new ParserParameter("testJpql.customSQL", params)).getExecutableSql();
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        //定义Connection对象
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(url, username, password);
-            PreparedStatement pst = conn.prepareStatement(sql);
-            //执行sql语句
-            ResultSet rs = pst.executeQuery();
-            rs.next();
-            System.out.println();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        System.out.println();
+        List list = entityManager.createNativeQuery(sql, Blog.class).getResultList();
+        System.out.println(list);
     }
 }

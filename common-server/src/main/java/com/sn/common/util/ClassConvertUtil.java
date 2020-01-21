@@ -1,6 +1,9 @@
 package com.sn.common.util;
 
+import com.sn.common.annotation.ClassConvertIgnore;
+
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -18,19 +21,21 @@ public class ClassConvertUtil {
      */
     public static void populate(Object src, Object target) {
 
-        Method[] srcMethods = src.getClass().getMethods();
-        Method[] targetMethods = target.getClass().getMethods();
-
+        // 获取当前类定义的所有方法，不包括父类和接口的
+        Method[] srcMethods = src.getClass().getDeclaredMethods();
+        Method[] targetMethods = target.getClass().getDeclaredMethods();
         for (Method srcMethod : srcMethods) {
             String srcMethodName = srcMethod.getName();
             if (srcMethodName.startsWith("get")) {
                 try {
                     Object result = srcMethod.invoke(src);
-
+                    String fieldName = srcMethodName.substring(3, 4).toLowerCase() + srcMethodName.substring(4);
+                    Field field = src.getClass().getDeclaredField(fieldName);
+                    ClassConvertIgnore classConvertIgnore = field.getAnnotation(ClassConvertIgnore.class);
                     for (Method targetMethod : targetMethods) {
                         String targetMethodName = targetMethod.getName();
 
-                        if (targetMethodName.startsWith("set") && targetMethodName.substring(3)
+                        if (classConvertIgnore == null && targetMethodName.startsWith("set") && targetMethodName.substring(3)
                                 .equals(srcMethodName.substring(3))) {
                             targetMethod.invoke(target, result);
                         }

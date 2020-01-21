@@ -50,4 +50,7 @@ public class PersonalInformation {
 
     @Column(name = "username", columnDefinition = "VARCHAR(60) NOT NULL COMMENT '用户名'")
     private String username;
+
+    @Column(name = "updateTime", columnDefinition = "DATETIME COMMENT '更新时间'")
+    private Date updateTime;
 }

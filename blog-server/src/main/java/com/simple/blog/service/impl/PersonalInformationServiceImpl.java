@@ -1,11 +1,14 @@
 package com.simple.blog.service.impl;
 
+import com.fasterxml.jackson.databind.util.ClassUtil;
 import com.simple.blog.constant.CommonConstant;
 import com.simple.blog.dto.PersonalInformationDTO;
 import com.simple.blog.entity.PersonalInformation;
+import com.simple.blog.jpql.JpqlDao;
 import com.simple.blog.repository.PersonalInformationRepository;
 import com.simple.blog.repository.UsersRepository;
 import com.simple.blog.service.PersonalInformationService;
+import com.sn.common.util.ClassConvertUtil;
 import com.sn.common.util.DateUtil;
 import com.simple.blog.util.HttpServletRequestUtil;
 import com.sn.common.util.MapConvertEntityUtil;
@@ -14,12 +17,10 @@ import com.sn.common.dto.CommonDTO;
 import com.sn.common.vo.CommonVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by songning on 2019/8/25 2:50 PM
@@ -35,6 +36,8 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
 
     @Autowired
     private UsersRepository usersRepository;
+    @Autowired
+    private JpqlDao jpqlDao;
 
     @Override
     public <T> CommonDTO<T> savePersonalInfo(CommonVO<List<PersonalInformationVO>> commonVO) {
@@ -68,7 +71,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         String endTime = vo.getEndTime();
         Timestamp startTimeStamp = DateUtil.strToSqlDate(startTime, CommonConstant.YEAR_DATETIME_PATTERN);
         Timestamp endTimeStamp = DateUtil.strToSqlDate(endTime, CommonConstant.YEAR_DATETIME_PATTERN);
-        PersonalInformation personalInformation = PersonalInformation.builder().username(username).userId(userId).infoType(infoType).mechanism(mechanism).position(position).introduction(introduction).startTime(startTimeStamp).endTime(endTimeStamp).build();
+        PersonalInformation personalInformation = PersonalInformation.builder().username(username).userId(userId).infoType(infoType).mechanism(mechanism).position(position).introduction(introduction).startTime(startTimeStamp).endTime(endTimeStamp).updateTime(new Date()).build();
         personalInformationRepository.save(personalInformation);
         return commonDTO;
     }
@@ -128,10 +131,23 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         CommonDTO<PersonalInformationDTO> commonDTO = new CommonDTO<>();
         PersonalInformationVO vo = commonVO.getCondition();
         String username = httpServletRequestUtil.getUsername();
-        Timestamp startTimeStamp = DateUtil.strToSqlDate(vo.getStartTime(), CommonConstant.YEAR_DATETIME_PATTERN);
-        Timestamp endTimeStamp = DateUtil.strToSqlDate(vo.getEndTime(), CommonConstant.YEAR_DATETIME_PATTERN);
-        PersonalInformation personalInformation = PersonalInformation.builder().id(vo.getInfoId()).infoType(vo.getInfoType()).startTime(startTimeStamp).endTime(endTimeStamp).introduction(vo.getIntroduction()).mechanism(vo.getMechanism()).username(username).position(vo.getPosition()).build();
-        personalInformationRepository.updateNative(personalInformation);
+        Map<String, Object> params = new HashMap<>(2);
+        try {
+            params = MapConvertEntityUtil.EntityToMap(vo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (!StringUtils.isEmpty(vo.getStartTime())) {
+            Timestamp startTimeStamp = DateUtil.strToSqlDate(vo.getStartTime(), CommonConstant.YEAR_DATETIME_PATTERN);
+            params.put("startTime", startTimeStamp);
+        }
+        if (!StringUtils.isEmpty(vo.getEndTime())) {
+            Timestamp endTimeStamp = DateUtil.strToSqlDate(vo.getEndTime(), CommonConstant.YEAR_DATETIME_PATTERN);
+            params.put("endTime", endTimeStamp);
+        }
+        params.put("id", vo.getInfoId());
+        params.put("updateTime", new Date());
+        jpqlDao.update("personalInformationJPQL.updatePersonalInformation", params);
         List<Map<String, Object>> infos = personalInformationRepository.findByUsernameNative(username);
         PersonalInformationDTO dto;
         List<PersonalInformationDTO> result = new ArrayList<>();

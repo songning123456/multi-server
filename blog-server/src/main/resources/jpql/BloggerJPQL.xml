@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jpa module="bloggerJPQL">
+    <jpql id="updateBlogger">
+        update blogger set
+        #if($author)
+        author = :author,
+        #end
+        #if($realName)
+        real_name = :realName,
+        #end
+        #if($gender)
+        gender = :gender,
+        #end
+        #if($age)
+        age = :age,
+        #end
+        #if($profession)
+        profession = :profession,
+        #end
+        #if($telephone)
+        telephone = :telephone,
+        #end
+        #if($email)
+        email = :email,
+        #end
+        #if($motto)
+        motto = :motto,
+        #end
+        #if($headPortrait)
+        head_portrait = :headPortrait,
+        #end
+        #if($updateTime)
+        update_time = :updateTime
+        #end
+        where
+        1 = 1
+        #if($username)
+        and username = :username
+        #end
+    </jpql>
+</jpa>

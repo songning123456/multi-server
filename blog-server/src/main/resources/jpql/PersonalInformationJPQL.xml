@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jpa module="personalInformationJPQL">
+    <jpql id="updatePersonalInformation">
+        update personal_information set
+        #if($endTime)
+        end_time = :endTime,
+        #end
+        #if($startTime)
+        start_time = :startTime,
+        #end
+        #if($infoType)
+        info_type = :infoType,
+        #end
+        #if($introduction)
+        introduction = :introduction,
+        #end
+        #if($mechanism)
+        mechanism = :mechanism,
+        #end
+        #if($position)
+        position = :position,
+        #end
+        #if($updateTime)
+        update_time = :updateTime
+        #end
+        where 1=1
+        #if($id)
+        and id = :id
+        #end
+    </jpql>
+</jpa>

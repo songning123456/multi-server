@@ -46,9 +46,9 @@ public class ParsedJpql extends Jpql {
         String jpqlStr = this.getParsed();
         try {
             Map<String, Object> params = this.getParameterMap();
-            for (Map.Entry<String, Object> entry : params.entrySet()) {
-                String key = entry.getKey();
-                Object obj = entry.getValue();
+            for (int i = params.keySet().size() - 1; i >= 0; i--) {
+                String key = "argument" + i;
+                Object obj = params.get(key);
                 if (obj instanceof Date) {
                     jpqlStr = jpqlStr.replaceAll(":" + key, "\'" + toDateTimeStr((Date) obj) + "\'");
                 } else if (obj instanceof String) {
@@ -58,11 +58,11 @@ public class ParsedJpql extends Jpql {
                     if (((Collection) obj).size() > 0) {
                         if (((Collection) obj).iterator().next() instanceof String) {
                             for (String o : ((Collection<String>) obj)) {
-                                list.append("\'").append(o).append("\',");
+                                list.append("\'" + o + "\',");
                             }
                             list.deleteCharAt(list.length() - 1);
                         } else {
-                            list.append(obj.toString(), 1, obj.toString().length() - 1);
+                            list.append(obj.toString().substring(1, ((Collection) obj).toString().length() - 1));
                         }
                     }
                     jpqlStr = jpqlStr.replaceAll(":" + key, list.toString());
@@ -73,7 +73,7 @@ public class ParsedJpql extends Jpql {
             if (jpqlStr.contains("like") && (jpqlStr.contains(".") || jpqlStr.contains("*"))) {
                 this.setParsed(jpqlStr);
             }
-            log.info("{\"QueryId\": \"{}\"," + "\"SQL\": \"{}\"}", this.getId(), jpqlStr.replaceAll("\\s+", " "));
+            log.info("{\"ModuleId\": \"{}\"," + "\"SQL\": \"{}\"}", this.getId(), jpqlStr.replaceAll("\\s+", " "));
         } catch (Exception e) {
             log.error("SQL转换失败：" + e.getMessage());
         }

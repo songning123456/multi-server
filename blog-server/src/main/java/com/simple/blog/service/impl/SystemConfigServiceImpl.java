@@ -12,18 +12,19 @@ import com.simple.blog.util.HttpServletRequestUtil;
 import com.simple.blog.vo.SystemConfigVO;
 import com.sn.common.dto.CommonDTO;
 import com.sn.common.vo.CommonVO;
+import com.sn.jpql.JpqlParser;
+import com.sn.jpql.ParserParameter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.Predicate;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: songning
@@ -39,6 +40,10 @@ public class SystemConfigServiceImpl implements SystemConfigService {
     private MemoryService memoryService;
     @Autowired
     private HttpServletRequestUtil httpServletRequestUtil;
+    @Autowired
+    private JpqlParser jpqlParser;
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Override
     public CommonDTO<SystemConfigDTO> getSystemConfig(CommonVO<SystemConfigVO> commonVO) {
@@ -54,28 +59,21 @@ public class SystemConfigServiceImpl implements SystemConfigService {
             commonDTO.setMessage("token无效,请重新登陆");
             return commonDTO;
         }
-        Sort sort = Sort.by(Sort.Direction.ASC, "configKey");
-        Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
-        Specification specification = (Specification) (root, criteriaQuery, criteriaBuilder) -> {
-            List<Predicate> predicateList = new ArrayList<>();
-            if (!StringUtils.isEmpty(configKey)) {
-                predicateList.add(criteriaBuilder.like(root.get("configKey"), "%" + configKey + "%"));
-            }
-            if (!StringUtils.isEmpty(configValue)) {
-                predicateList.add(criteriaBuilder.like(root.get("configValue"), "%" + configValue + "%"));
-            }
-            if (!StringUtils.isEmpty(valueDescription)) {
-                predicateList.add(criteriaBuilder.like(root.get("valueDescription"), "%" + valueDescription + "%"));
-            }
-            predicateList.add(criteriaBuilder.equal(root.get("username"), username));
-            return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
-        };
-        Page<SystemConfig> systemConfigPage = systemConfigRepository.findAll(specification, pageable);
-        List<SystemConfig> systemConfigList = systemConfigPage.getContent();
+        Map<String, Object> params = new HashMap<>(2);
+        params.put("offset", recordStartNo * pageRecordNum);
+        params.put("pageRecordNum", pageRecordNum);
+        params.put("configKey", configKey);
+        params.put("configValue", configValue);
+        params.put("valueDescription", valueDescription);
+        params.put("username", username);
+        String getSql = jpqlParser.parse(new ParserParameter("systemConfigJpql.getSystemConfig", params)).getExecutableSql();
+        List<SystemConfig> systemConfigList = entityManager.createNativeQuery(getSql, SystemConfig.class).getResultList();
+        String countSql = jpqlParser.parse(new ParserParameter("systemConfigJpql.countSystemConfig", params)).getExecutableSql();
+        long total = ((BigInteger) entityManager.createNativeQuery(countSql).getSingleResult()).longValue();
         List<SystemConfigDTO> target = new ArrayList<>();
         ClassConvertUtil.populateList(systemConfigList, target, SystemConfigDTO.class);
         commonDTO.setData(target);
-        commonDTO.setTotal((long) systemConfigList.size());
+        commonDTO.setTotal(total);
         return commonDTO;
     }
 

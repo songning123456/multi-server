@@ -2,6 +2,7 @@ package com.simple.blog.service.impl;
 
 import com.simple.blog.dto.BloggerDTO;
 import com.simple.blog.entity.Blogger;
+import com.simple.blog.jpql.JpqlDao;
 import com.simple.blog.repository.BloggerRepository;
 import com.simple.blog.service.BloggerService;
 import com.sn.common.dto.CommonDTO;
@@ -12,13 +13,12 @@ import com.sn.common.util.MapConvertEntityUtil;
 import com.simple.blog.vo.BloggerVO;
 import com.sn.common.vo.CommonVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author sn
@@ -31,6 +31,8 @@ public class BloggerServiceImpl implements BloggerService {
 
     @Autowired
     private HttpServletRequestUtil httpServletRequestUtil;
+    @Autowired
+    private JpqlDao JpqlDao;
 
     @Override
     public CommonDTO<BloggerDTO> getBlogger(CommonVO<BloggerVO> commonVO) {
@@ -57,6 +59,8 @@ public class BloggerServiceImpl implements BloggerService {
     }
 
     @Override
+    @Transactional
+    @Modifying
     public CommonDTO<BloggerDTO> updateBlogger(CommonVO<BloggerVO> commonVO) {
         CommonDTO<BloggerDTO> commonDTO = new CommonDTO<>();
         String username = httpServletRequestUtil.getUsername();
@@ -70,8 +74,13 @@ public class BloggerServiceImpl implements BloggerService {
             String oldAvatar = bloggerRepository.findHeadPortraitNative(username);
             FileUtil.deleteImage(oldAvatar);
         }
-        // 更新
-        bloggerRepository.updateNative(blogger);
+        Map<String, Object> params = new HashMap<>(2);
+        try {
+            params = MapConvertEntityUtil.EntityToMap(blogger);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JpqlDao.update("bloggerJPQL.updateBlogger", params);
         // 再次查询并返回
         list = bloggerRepository.findByUsernameNative(username);
         BloggerDTO bloggerDTO = new BloggerDTO();

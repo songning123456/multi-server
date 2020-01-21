@@ -23,7 +23,7 @@ public class MapConvertEntityUtil {
         for (Method method : methods) {
             if (method.getName().startsWith("get")) {
                 String field = method.getName();
-                field = field.substring(field.indexOf("get") + 1);
+                field = field.substring(field.indexOf("get") + 3);
                 field = field.toLowerCase().charAt(0) + field.substring(1);
                 Object value = method.invoke(entity, (Object[]) null);
                 map.put(field, value);

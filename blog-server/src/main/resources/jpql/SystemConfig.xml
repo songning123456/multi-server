@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jpa module="systemConfigJpql">
+    <jpql id="getSystemConfig">
+        select * from system_config where 1=1
+        #if($configKey)
+        and config_key like concat('%', :configKey, '%')
+        #end
+        #if($configValue)
+        and config_value like concat('%', :configValue, '%')
+        #end
+        #if($valueDescription)
+        and value_description like concat('%', :valueDescription, '%')
+        #end
+        #if($username)
+        and username = :username
+        #end
+        order by config_key asc
+        #if($offset &amp;&amp; $pageRecordNum)
+        limit :offset, :pageRecordNum
+        #end
+        #if(!$offset &amp;&amp; $pageRecordNum)
+        limit :pageRecordNum
+        #end
+    </jpql>
+    <jpql id="countSystemConfig">
+        select count(1) from system_config where 1=1
+        #if($configKey)
+        and config_key like concat('%', :configKey, '%')
+        #end
+        #if($configValue)
+        and config_value like concat('%', :configValue, '%')
+        #end
+        #if($valueDescription)
+        and value_description like concat('%', :valueDescription, '%')
+        #end
+        #if($username)
+        and username = :username
+        #end
+    </jpql>
+</jpa>
