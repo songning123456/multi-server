@@ -2,13 +2,10 @@ package com.simple.blog.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simple.blog.dto.ThirdPartDTO;
-import com.simple.blog.repository.LabelConfigRepository;
 import com.simple.blog.repository.UsersRepository;
 import com.simple.blog.service.RegisterService;
 import com.simple.blog.service.ThirdPartService;
 import com.sn.common.util.HttpUtil;
-import com.sn.common.util.RandomUtil;
-import com.simple.blog.vo.LabelVO;
 import com.simple.blog.vo.RegisterVO;
 import com.simple.blog.vo.ThirdPartVO;
 import com.sn.common.dto.CommonDTO;
@@ -18,9 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,8 +28,6 @@ public class ThirdPartServiceImpl implements ThirdPartService {
 
     @Autowired
     private RegisterService registerService;
-    @Autowired
-    private LabelConfigRepository labelConfigRepository;
     @Autowired
     private UsersRepository usersRepository;
 
@@ -78,16 +71,6 @@ public class ThirdPartServiceImpl implements ThirdPartService {
         String headPortrait = String.valueOf(dataExt.get("avatar_url"));
         String email = String.valueOf(dataExt.get("email"));
         String realName = String.valueOf(dataExt.get("name"));
-        List<String> labelSrc = labelConfigRepository.findAllLabelNameNative();
-        List<LabelVO> labelTarget = new ArrayList<>();
-        LabelVO labelVO;
-        for (String labelName : labelSrc) {
-            labelVO = new LabelVO();
-            String attention = RandomUtil.getRandom(0, 1);
-            labelVO.setLabelName(labelName);
-            labelVO.setAttention(Integer.parseInt(attention));
-            labelTarget.add(labelVO);
-        }
         RegisterVO registerVO = new RegisterVO();
         registerVO.setAuthor(author);
         registerVO.setUsername(username);
@@ -95,7 +78,6 @@ public class ThirdPartServiceImpl implements ThirdPartService {
         registerVO.setHeadPortrait(headPortrait);
         registerVO.setEmail(email);
         registerVO.setRealName(realName);
-        registerVO.setLabelVOS(labelTarget);
         CommonVO<RegisterVO> cvo = new CommonVO<>();
         cvo.setCondition(registerVO);
         registerService.registerAll(cvo);

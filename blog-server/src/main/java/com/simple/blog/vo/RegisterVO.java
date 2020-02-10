@@ -33,6 +33,4 @@ public class RegisterVO {
     private String headPortrait;
 
     private String password;
-
-    private List<LabelVO> labelVOS;
 }

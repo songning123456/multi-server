@@ -3,19 +3,12 @@ package com.simple.blog.service.impl;
 import com.simple.blog.constant.CommonConstant;
 import com.simple.blog.dto.LabelDTO;
 import com.simple.blog.dto.RegisterDTO;
-import com.simple.blog.entity.Blogger;
-import com.simple.blog.entity.LabelRelation;
-import com.simple.blog.entity.SystemConfig;
-import com.simple.blog.entity.Users;
-import com.simple.blog.repository.BloggerRepository;
-import com.simple.blog.repository.LabelRelationRepository;
-import com.simple.blog.repository.SystemConfigRepository;
-import com.simple.blog.repository.UsersRepository;
+import com.simple.blog.entity.*;
+import com.simple.blog.repository.*;
 import com.simple.blog.service.MemoryService;
 import com.simple.blog.service.RegisterService;
 import com.sn.common.util.ClassConvertUtil;
 import com.sn.common.util.MapConvertEntityUtil;
-import com.simple.blog.vo.LabelVO;
 import com.simple.blog.vo.RegisterVO;
 import com.sn.common.dto.CommonDTO;
 import com.sn.common.vo.CommonVO;
@@ -42,6 +35,8 @@ public class RegisterServiceImpl implements RegisterService {
     private SystemConfigRepository systemConfigRepository;
     @Autowired
     private LabelRelationRepository labelRelationRepository;
+    @Autowired
+    private LabelConfigRepository labelConfigRepository;
     @Autowired
     private MemoryService memoryService;
 
@@ -76,10 +71,13 @@ public class RegisterServiceImpl implements RegisterService {
                     }
                     try {
                         // 注册label-relation
-                        List<LabelVO> src = commonVO.getCondition().getLabelVOS();
-                        for (LabelVO labelVO : src) {
-                            String labelName = labelVO.getLabelName();
-                            Integer attention = labelVO.getAttention();
+                        List<String> topFive = labelRelationRepository.findTopFive();
+                        List<String> labelNames = labelConfigRepository.findAllLabelNameNative();
+                        for (String labelName : labelNames) {
+                            int attention = 0;
+                            if (topFive.contains(labelName)) {
+                                attention = 1;
+                            }
                             LabelRelation labelRelation = LabelRelation.builder().labelName(labelName).username(username).attention(attention).build();
                             synchronized (object) {
                                 labelRelationRepository.save(labelRelation);

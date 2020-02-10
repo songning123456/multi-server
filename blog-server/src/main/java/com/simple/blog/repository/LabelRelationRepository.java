@@ -26,6 +26,9 @@ public interface LabelRelationRepository extends JpaRepository<LabelRelation, St
     @Query(value = "select attention from label_relation where username = ?1 and label_name = ?2", nativeQuery = true)
     Map<String, Object> findAttentionByUsernameAndLabelNameNative(String username, String labelName);
 
+    @Query(value = "select label_name as labelName from label_relation where attention = 1 group by label_name order by count(1) desc limit 5", nativeQuery = true)
+    List<String> findTopFive();
+
     @Modifying
     @Transactional
     @Query(value = "update label_relation set attention = ?3 where username = ?1 and label_name = ?2", nativeQuery = true)
