@@ -15,6 +15,6 @@ import java.util.Map;
 @Repository
 public interface VideoRepository extends JpaRepository<Video, String> {
 
-    @Query(value = "select src, kind as type from video where username = ?1", nativeQuery = true)
-    List<Map<String, Object>> findVideoByUsernameNative(String username);
+    @Query(value = "select * from video where username = ?1", nativeQuery = true)
+    List<Video> findVideoByUsernameNative(String username);
 }

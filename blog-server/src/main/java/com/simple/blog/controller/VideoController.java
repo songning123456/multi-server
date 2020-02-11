@@ -2,8 +2,10 @@ package com.simple.blog.controller;
 
 import com.simple.blog.dto.VideoDTO;
 import com.simple.blog.service.VideoService;
+import com.simple.blog.vo.VideoVO;
 import com.sn.common.annotation.ControllerAspectAnnotation;
 import com.sn.common.dto.CommonDTO;
+import com.sn.common.vo.CommonVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +33,13 @@ public class VideoController {
     @ControllerAspectAnnotation(description = "上传视频 保存到数据库 返回数据库个人结果")
     public CommonDTO<VideoDTO> operateVideos(@RequestParam("file") MultipartFile multipartFile, @RequestParam("dir") String dir) {
         CommonDTO<VideoDTO> commonDTO = videoService.operateVideo(multipartFile, dir);
+        return commonDTO;
+    }
+
+    @PostMapping("/getVideo")
+    @ControllerAspectAnnotation(description = "获取视频")
+    public CommonDTO<VideoDTO> getVideos(@RequestBody CommonVO<VideoVO> commonVO) {
+        CommonDTO<VideoDTO> commonDTO = videoService.getVideo(commonVO);
         return commonDTO;
     }
 

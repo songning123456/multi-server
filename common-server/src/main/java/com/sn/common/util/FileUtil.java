@@ -9,6 +9,13 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.Java2DFrameConverter;
 
 /**
  * @Author songning
@@ -253,5 +260,40 @@ public class FileUtil {
         File file = new File("");
         String filePath = file.getCanonicalPath();
         return filePath;
+    }
+
+    /**
+     * 截取视频某一帧图片
+     *
+     * @param videoFile 视频文件
+     * @param frameFile 生成的图片文件
+     * @throws Exception
+     */
+    public static void fetchFrame(String videoFile, String frameFile) throws Exception {
+        File targetFile = new File(frameFile);
+        FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(videoFile);
+        fFmpegFrameGrabber.start();
+        int length = fFmpegFrameGrabber.getLengthInFrames();
+        int i = 0;
+        Frame frame = null;
+        while (i < length) {
+            // 过滤前5帧，避免出现全黑的图片，依自己情况而定
+            frame = fFmpegFrameGrabber.grabFrame();
+            if ((i > 48) && (frame.image != null)) {
+                break;
+            }
+            i++;
+        }
+        int imageWidth = frame.imageWidth;
+        int imageHeight = frame.imageHeight;
+        // 对截取的帧进行等比例缩放
+        int width = 300;
+        int height = (int) (((double) width / imageWidth) * imageHeight);
+        Java2DFrameConverter converter = new Java2DFrameConverter();
+        BufferedImage bufferedImage = converter.getBufferedImage(frame);
+        BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+        bi.getGraphics().drawImage(bufferedImage.getScaledInstance(width, height, Image.SCALE_SMOOTH), 0, 0, null);
+        ImageIO.write(bi, "jpg", targetFile);
+        fFmpegFrameGrabber.stop();
     }
 }

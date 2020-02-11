@@ -25,4 +25,8 @@ public class VideoDTO {
      */
     private String type;
 
+    private String cover;
+
+    private String name;
+
 }
