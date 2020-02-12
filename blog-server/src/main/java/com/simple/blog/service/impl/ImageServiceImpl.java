@@ -143,9 +143,9 @@ public class ImageServiceImpl implements ImageService {
         String imageName = UUID.randomUUID() + "." + Objects.requireNonNull(multipartFile.getOriginalFilename()).split("\\.")[1];
         String imageSrc = imageFile + File.separator + imageName;
         try {
-            InputStream inputStream = multipartFile.getInputStream();
             if (FileUtil.mkDirs(imageFile)) {
-                FileUtil.streamToImage(imageSrc, inputStream);
+                // 使用此方法保存必须要绝对路径且文件夹必须已存在,否则报错
+                multipartFile.transferTo(new File(imageSrc));
             }
         } catch (IOException e) {
             e.printStackTrace();

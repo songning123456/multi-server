@@ -39,4 +39,13 @@ public class CommonConstant {
     public static final String READ_ARTICLE = "阅读文章";
     public static final String SIMPLE_CLOCK = "休眠时钟";
     public static final String SIMPLE_MAP = "定位地图";
+
+    /**
+     * 保存的目录 album => 保存图片, avatar => 保存头像, video => 保存视频
+     */
+    public static final String ALBUM = "album";
+    public static final String AVATAR = "avatar";
+    public static final String VIDEO = "video";
+
+    public static final String CHUNK_SUFFIX = ".chunk";
 }

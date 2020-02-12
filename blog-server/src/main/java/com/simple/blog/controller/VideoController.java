@@ -29,17 +29,34 @@ public class VideoController {
     @Autowired
     private VideoService videoService;
 
-    @PostMapping("/operateVideo")
-    @ControllerAspectAnnotation(description = "上传视频 保存到数据库 返回数据库个人结果")
-    public CommonDTO<VideoDTO> operateVideos(@RequestParam("file") MultipartFile multipartFile, @RequestParam("dir") String dir) {
-        CommonDTO<VideoDTO> commonDTO = videoService.operateVideo(multipartFile, dir);
-        return commonDTO;
-    }
-
     @PostMapping("/getVideo")
     @ControllerAspectAnnotation(description = "获取视频")
     public CommonDTO<VideoDTO> getVideos(@RequestBody CommonVO<VideoVO> commonVO) {
         CommonDTO<VideoDTO> commonDTO = videoService.getVideo(commonVO);
+        return commonDTO;
+    }
+
+    @GetMapping("/isExist")
+    @ControllerAspectAnnotation(description = "根据文件名判断是否存在")
+    public CommonDTO<VideoDTO> isExists(@RequestParam("md5") String md5) {
+        CommonDTO<VideoDTO> commonDTO = videoService.isExist(md5);
+        return commonDTO;
+    }
+
+    @GetMapping("/shardMerge")
+    @ControllerAspectAnnotation(description = "合并分片")
+    public CommonDTO<VideoDTO> shardMerges(@RequestParam("md5") String md5, @RequestParam("filename") String filename) {
+        CommonDTO<VideoDTO> commonDTO = videoService.shardMerge(md5, filename);
+        return commonDTO;
+    }
+
+    @PostMapping("/shardUpload")
+    @ControllerAspectAnnotation(description = "分片上传")
+    public CommonDTO<VideoDTO> shardUploads(@RequestParam("file") MultipartFile multipartFile,
+                                            @RequestParam("md5") String md5,
+                                            @RequestParam("filename") String filename,
+                                            @RequestParam(name = "currentChunk", defaultValue = "-1") Integer currentChunk) {
+        CommonDTO<VideoDTO> commonDTO = videoService.shardUpload(multipartFile, md5, filename, currentChunk);
         return commonDTO;
     }
 
@@ -49,9 +66,8 @@ public class VideoController {
         ServletOutputStream servletOutputStream = null;
         try {
             if (url != null) {
-                response.setContentType("image/*");
-                response.addHeader("Connection", "keep-alive");
-                response.addHeader("Cache-Control", "max-age=604800");
+                response.addHeader("Accept-Ranges", "bytes");
+                response.addHeader("Content-Type", "audio/mpeg;charset=UTF-8");
                 File file = new File(url);
                 bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
                 servletOutputStream = response.getOutputStream();

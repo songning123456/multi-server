@@ -10,4 +10,6 @@ import lombok.Data;
 public class VideoVO {
 
     private String userId;
+
+    private String name;
 }
