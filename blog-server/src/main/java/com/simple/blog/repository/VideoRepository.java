@@ -14,6 +14,6 @@ import java.util.List;
 @Repository
 public interface VideoRepository extends JpaRepository<Video, String> {
 
-    @Query(value = "select * from video where username = ?1", nativeQuery = true)
+    @Query(value = "select * from video where username = ?1 order by update_time desc", nativeQuery = true)
     List<Video> findVideoByUsernameNative(String username);
 }
