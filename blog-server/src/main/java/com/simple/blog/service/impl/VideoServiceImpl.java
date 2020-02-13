@@ -9,6 +9,7 @@ import com.simple.blog.service.VideoService;
 import com.simple.blog.util.HttpServletRequestUtil;
 import com.simple.blog.vo.VideoVO;
 import com.sn.common.dto.CommonDTO;
+import com.sn.common.util.DateUtil;
 import com.sn.common.util.FileUtil;
 import com.sn.common.vo.CommonVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +98,7 @@ public class VideoServiceImpl implements VideoService {
         String videoSrc = dirPath + File.separator + filename;
         String coverSrc = dirPath + File.separator + coverName;
         String type = "video/" + filename.split("\\.")[1];
-        Video video = Video.builder().name(name).src(videoSrc).cover(coverSrc).type(type).userId(userId).username(username).build();
+        Video video = Video.builder().name(name).src(videoSrc).cover(coverSrc).type(type).userId(userId).username(username).updateTime(new Date()).build();
         videoRepository.save(video);
         try {
             FileUtil.fetchFrame(videoSrc, coverSrc);
@@ -142,7 +143,8 @@ public class VideoServiceImpl implements VideoService {
             String type = video.getType();
             String cover = video.getCover();
             String name = video.getName();
-            videoDTO = VideoDTO.builder().src(src).type(type).cover(cover).name(name).build();
+            String updateTime = DateUtil.dateToStr(video.getUpdateTime(), "yyyy-MM-dd HH:mm:ss");
+            videoDTO = VideoDTO.builder().src(src).type(type).cover(cover).name(name).updateTime(updateTime).build();
             dtoList.add(videoDTO);
         }
         return dtoList;

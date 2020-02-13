@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @author: songning
@@ -41,4 +42,7 @@ public class Video {
 
     @Column(name = "cover", columnDefinition = "VARCHAR(120) COMMENT '视频封面地址'")
     private String cover;
+
+    @Column(name = "updateTime", columnDefinition = "DATETIME NOT NULL COMMENT '更新时间'")
+    private Date updateTime;
 }

@@ -29,4 +29,5 @@ public class VideoDTO {
 
     private String name;
 
+    private String updateTime;
 }
