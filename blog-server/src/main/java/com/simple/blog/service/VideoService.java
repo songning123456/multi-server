@@ -14,7 +14,7 @@ public interface VideoService {
 
     CommonDTO<VideoDTO> getVideo(CommonVO<VideoVO> commonVO);
 
-    CommonDTO<VideoDTO> isExist(String md5);
+    CommonDTO<Integer> isExist(String md5);
 
     CommonDTO<VideoDTO> shardMerge(String md5, String filename);
 
