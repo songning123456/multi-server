@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -97,14 +98,16 @@ public class VideoServiceImpl implements VideoService {
         String coverName = name + ".jpg";
         String videoSrc = dirPath + File.separator + filename;
         String coverSrc = dirPath + File.separator + coverName;
-        String type = "video/" + filename.split("\\.")[1];
-        Video video = Video.builder().name(name).src(videoSrc).cover(coverSrc).type(type).userId(userId).username(username).updateTime(new Date()).build();
-        videoRepository.save(video);
+        // 暂时仅支持mp4格式
+        String type = "video/mp4";
         try {
             FileUtil.fetchFrame(videoSrc, coverSrc);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Date updateTime = new Date(mergeFile.lastModified());
+        Video video = Video.builder().name(name).src(videoSrc).cover(coverSrc).type(type).userId(userId).username(username).updateTime(updateTime).build();
+        videoRepository.save(video);
         List<Video> videos = videoRepository.findVideoByUsernameNative(username);
         List<VideoDTO> list = this.entity2DTO(videos);
         commonDTO.setData(list);

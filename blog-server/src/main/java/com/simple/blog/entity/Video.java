@@ -31,7 +31,7 @@ public class Video {
     @Column(name = "userId", columnDefinition = "VARCHAR(60) COMMENT '用户ID'")
     private String userId;
 
-    @Column(name = "src", columnDefinition = "VARCHAR(120) COMMENT '视频地址'")
+    @Column(name = "src", columnDefinition = "VARCHAR(255) COMMENT '视频地址'")
     private String src;
 
     @Column(name = "kind", columnDefinition = "VARCHAR(120) COMMENT '视频格式类型'")
@@ -40,7 +40,7 @@ public class Video {
     @Column(name = "name", columnDefinition = "VARCHAR(120) COMMENT '视频名称'")
     private String name;
 
-    @Column(name = "cover", columnDefinition = "VARCHAR(120) COMMENT '视频封面地址'")
+    @Column(name = "cover", columnDefinition = "VARCHAR(255) COMMENT '视频封面地址'")
     private String cover;
 
     @Column(name = "updateTime", columnDefinition = "DATETIME NOT NULL COMMENT '更新时间'")
