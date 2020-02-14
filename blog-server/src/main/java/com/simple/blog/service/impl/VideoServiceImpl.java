@@ -14,12 +14,15 @@ import com.sn.common.util.FileUtil;
 import com.sn.common.vo.CommonVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -42,10 +45,14 @@ public class VideoServiceImpl implements VideoService {
     public CommonDTO<VideoDTO> getVideo(CommonVO<VideoVO> commonVO) {
         CommonDTO<VideoDTO> commonDTO = new CommonDTO<>();
         String username = httpServletRequestUtil.getUsername();
-        List<Video> videos = videoRepository.findVideoByUsernameNative(username);
-        List<VideoDTO> list = this.entity2DTO(videos);
+        Integer recordStartNo = commonVO.getRecordStartNo();
+        Integer pageRecordNum = commonVO.getPageRecordNum();
+        Sort sort = Sort.by(Sort.Direction.DESC, "update_time");
+        Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
+        Page<Video> page = videoRepository.findVideoByUsernameNative(username, pageable);
+        List<VideoDTO> list = this.entity2DTO(page.getContent());
         commonDTO.setData(list);
-        commonDTO.setTotal((long) list.size());
+        commonDTO.setTotal(page.getTotalElements());
         return commonDTO;
     }
 
@@ -104,14 +111,11 @@ public class VideoServiceImpl implements VideoService {
             FileUtil.fetchFrame(videoSrc, coverSrc);
         } catch (Exception e) {
             e.printStackTrace();
+            commonDTO.setMessage("封面图片生成失败");
         }
         Date updateTime = new Date(mergeFile.lastModified());
         Video video = Video.builder().name(name).src(videoSrc).cover(coverSrc).type(type).userId(userId).username(username).updateTime(updateTime).build();
         videoRepository.save(video);
-        List<Video> videos = videoRepository.findVideoByUsernameNative(username);
-        List<VideoDTO> list = this.entity2DTO(videos);
-        commonDTO.setData(list);
-        commonDTO.setTotal((long) list.size());
         return commonDTO;
     }
 
