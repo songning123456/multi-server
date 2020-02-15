@@ -6,6 +6,7 @@ import com.simple.blog.repository.ImageRepository;
 import com.simple.blog.repository.UsersRepository;
 import com.simple.blog.service.ImageService;
 import com.sn.common.dto.CommonDTO;
+import com.sn.common.util.ClassConvertUtil;
 import com.sn.common.util.FileUtil;
 import com.simple.blog.util.HttpServletRequestUtil;
 import com.simple.blog.vo.ImageVO;
@@ -13,6 +14,10 @@ import com.sn.common.vo.CommonVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,48 +55,41 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public CommonDTO<ImageDTO> operateAlbum(MultipartFile multipartFile, String dir) {
+    public CommonDTO<ImageDTO> saveAlbum(MultipartFile multipartFile, String dir) {
         CommonDTO<ImageDTO> commonDTO = new CommonDTO<>();
         String username = httpServletRequestUtil.getUsername();
         String userId = usersRepository.findUserIdByNameNative(username);
         synchronized (object) {
             String imageSrc = this.savePicture(multipartFile, dir);
-            Image image = Image.builder().imageSrc(imageSrc).username(username).userId(userId).build();
+            Date updateTime = new Date(new File(imageSrc).lastModified());
+            String name = multipartFile.getOriginalFilename().split("\\.")[0];
+            Image image = Image.builder().imageSrc(imageSrc).username(username).userId(userId).updateTime(updateTime).name(name).build();
             imageRepository.save(image);
         }
-        List<String> images = imageRepository.findImageSrcByUsernameNative(username);
-        List<ImageDTO> list = new ArrayList<>();
-        ImageDTO imageDTO;
-        for (String src : images) {
-            imageDTO = ImageDTO.builder().imageSrc(src).build();
-            list.add(imageDTO);
-        }
-        commonDTO.setData(list);
-        commonDTO.setTotal((long) list.size());
         return commonDTO;
     }
 
     @Override
     public CommonDTO<ImageDTO> getAlbum(CommonVO<ImageVO> commonVO) {
         CommonDTO<ImageDTO> commonDTO = new CommonDTO<>();
-        List<String> images;
+        Integer recordStartNo = commonVO.getRecordStartNo();
+        Integer pageRecordNum = commonVO.getPageRecordNum();
+        Sort sort = Sort.by(Sort.Direction.DESC, "update_time");
+        Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
+        Page<Image> imageList;
         // 获取个人相册
         if (StringUtils.isEmpty(commonVO.getCondition().getUserId())) {
             String username = httpServletRequestUtil.getUsername();
-            images = imageRepository.findImageSrcByUsernameNative(username);
+            imageList = imageRepository.findImageSrcByUsernameNative(username, pageable);
         } else {
             // 查看作者信息时，获取的他人相册
             String userId = commonVO.getCondition().getUserId();
-            images = imageRepository.findImageSrcByUserIdNative(userId);
+            imageList = imageRepository.findImageSrcByUserIdNative(userId, pageable);
         }
         List<ImageDTO> list = new ArrayList<>();
-        ImageDTO imageDTO;
-        for (String src : images) {
-            imageDTO = ImageDTO.builder().imageSrc(src).build();
-            list.add(imageDTO);
-        }
+        ClassConvertUtil.populateList(imageList.getContent(), list, ImageDTO.class);
         commonDTO.setData(list);
-        commonDTO.setTotal((long) list.size());
+        commonDTO.setTotal(imageList.getTotalElements());
         return commonDTO;
     }
 

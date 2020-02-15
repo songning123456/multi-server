@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @author songning
@@ -32,4 +33,10 @@ public class Image {
 
     @Column(name = "userId", columnDefinition = "VARCHAR(60) COMMENT '用户ID'")
     private String userId;
+
+    @Column(name = "updateTime", columnDefinition = "DATETIME NOT NULL COMMENT '更新时间'")
+    private Date updateTime;
+
+    @Column(name = "name", columnDefinition = "VARCHAR(120) COMMENT '图片名称'")
+    private String name;
 }
