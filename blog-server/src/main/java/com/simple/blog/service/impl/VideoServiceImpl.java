@@ -11,7 +11,9 @@ import com.simple.blog.vo.VideoVO;
 import com.sn.common.dto.CommonDTO;
 import com.sn.common.util.DateUtil;
 import com.sn.common.util.FileUtil;
+import com.sn.common.util.StringUtil;
 import com.sn.common.vo.CommonVO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -44,15 +46,23 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public CommonDTO<VideoDTO> getVideo(CommonVO<VideoVO> commonVO) {
         CommonDTO<VideoDTO> commonDTO = new CommonDTO<>();
-        String username = httpServletRequestUtil.getUsername();
         Integer recordStartNo = commonVO.getRecordStartNo();
         Integer pageRecordNum = commonVO.getPageRecordNum();
         Sort sort = Sort.by(Sort.Direction.DESC, "update_time");
         Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
-        Page<Video> page = videoRepository.findVideoByUsernameNative(username, pageable);
-        List<VideoDTO> list = this.entity2DTO(page.getContent());
+        Page<Video> videoPage;
+        String userId = commonVO.getCondition().getUserId();
+        if (StringUtils.isEmpty(userId)) {
+            // 作者本人查看自己信息
+            String username = httpServletRequestUtil.getUsername();
+            videoPage = videoRepository.findVideoByUsernameNative(username, pageable);
+        } else {
+            // 其他人查看作者信息
+            videoPage = videoRepository.findVideoByUserIdNative(userId, pageable);
+        }
+        List<VideoDTO> list = this.entity2DTO(videoPage.getContent());
         commonDTO.setData(list);
-        commonDTO.setTotal(page.getTotalElements());
+        commonDTO.setTotal(videoPage.getTotalElements());
         return commonDTO;
     }
 

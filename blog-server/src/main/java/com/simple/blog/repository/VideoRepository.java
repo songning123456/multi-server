@@ -17,4 +17,8 @@ public interface VideoRepository extends JpaRepository<Video, String> {
     @Query(value = "select * from video where username = ?1 order by update_time desc",
             countQuery = "select count(*) from video where username = ?1 order by update_time desc", nativeQuery = true)
     Page<Video> findVideoByUsernameNative(String username, Pageable pageable);
+
+    @Query(value = "select * from video where user_id = ?1 order by update_time desc",
+            countQuery = "select count(*) from video where user_id = ?1 order by update_time desc", nativeQuery = true)
+    Page<Video> findVideoByUserIdNative(String userId, Pageable pageable);
 }
