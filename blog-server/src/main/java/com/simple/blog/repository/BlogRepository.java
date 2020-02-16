@@ -25,17 +25,20 @@ public interface BlogRepository extends JpaRepository<Blog, String> {
      * @param pageable
      * @return
      */
-    @Query(value = "select * from blog where kinds = :kinds order by update_time desc",
+    @Query(value = "select id, title, user_id as userId, author, update_time as updateTime " +
+            "from blog where kinds = :kinds order by update_time desc",
             countQuery = "select count(*) from blog where kinds = :kinds", nativeQuery = true)
-    Page<Blog> findAbstract(@Param("kinds") String kinds, Pageable pageable);
+    Page<Map<String, Object>> findAbstract(@Param("kinds") String kinds, Pageable pageable);
 
-    @Query(value = "select * where user_id = ?1 order by update_time desc",
+    @Query(value = "select id, title, user_id as userId, author, update_time as updateTime " +
+            "from blog where user_id = ?1 order by update_time desc",
             countQuery = "select count(*) from blog where user_id = ?1", nativeQuery = true)
-    Page<Blog> findByUserIdNative(String userId, Pageable pageable);
+    Page<Map<String, Object>> findByUserIdNative(String userId, Pageable pageable);
 
-    @Query(value = "select * from blog where id in (?1) order by update_time desc",
+    @Query(value = "select id, title, user_id as userId, author, update_time as updateTime " +
+            "from blog where id in (?1) order by update_time desc",
             countQuery = "select count(*) from blog where id in (?1)", nativeQuery = true)
-    Page<Blog> findByIdNative(List<String> articleIds, Pageable pageable);
+    Page<Map<String, Object>> findByIdNative(List<String> articleIds, Pageable pageable);
 
 
     /**
@@ -44,19 +47,20 @@ public interface BlogRepository extends JpaRepository<Blog, String> {
      * @param id
      * @return
      */
-    @Query(value = "select * from blog where id= :id", nativeQuery = true)
-    Blog findByIdNative(@Param("id") String id);
+    @Query(value = "select author, title, content, read_times as readTimes, update_time as updateTime from blog where id= :id", nativeQuery = true)
+    Map<String, Object> findByIdNative(@Param("id") String id);
 
-    @Query(value = "select * from blog where kinds = :kinds order by read_times desc, update_time desc limit 5", nativeQuery = true)
-    List<Blog> findHotArticle(@Param("kinds") String kinds);
+    @Query(value = "select id, author,user_id as userId, title, update_time as updateTime from blog where kinds = :kinds order by read_times desc, update_time desc limit 5", nativeQuery = true)
+    List<Map<String, Object>> findHotArticle(@Param("kinds") String kinds);
 
     @Transactional
     @Modifying
     @Query(value = "update blog set read_times = :readTimes where id = :id", nativeQuery = true)
     Integer updateReadTimes(@Param("id") String id, @Param("readTimes") Integer readTimes);
 
-    @Query(value = "select * from blog where content like %?1%", nativeQuery = true)
-    List<Blog> findByLikeContentNative(String content, Pageable pageable);
+    @Query(value = "select id, title, author, update_time as updateTime, content, user_id as userId from blog where content like %?1%",
+            countQuery = "select count(*) from blog where content like %?1%", nativeQuery = true)
+    Page<Map<String, Object>> findByLikeContentNative(String content, Pageable pageable);
 
     @Query(value = "select count(*) as yAxis, kinds as xAxis from blog where update_time >= ?1 and update_time <= ?2 group by kinds", nativeQuery = true)
     List<Map<String, Object>> statisticKinds(String startTime, String endTime);

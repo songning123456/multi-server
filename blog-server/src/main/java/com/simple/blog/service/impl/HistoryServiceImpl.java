@@ -63,8 +63,8 @@ public class HistoryServiceImpl implements HistoryService {
         History history;
         if (CommonConstant.READ_ARTICLE.equals(title)) {
             String articleId = commonVO.getCondition().getArticleId();
-            Blog blog = blogRepository.findByIdNative(articleId);
-            title = CssStyleUtil.spans(title, " ", blog.getTitle());
+            Map<String, Object> map = blogRepository.findByIdNative(articleId);
+            title = CssStyleUtil.spans(title, " ", String.valueOf(map.get("title")));
             history = History.builder().title(title).articleId(articleId).username(username).time(time).description(description).build();
         } else {
             title = CssStyleUtil.spans(title);
