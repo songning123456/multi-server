@@ -101,7 +101,7 @@ public class VideoController {
                     } else { // bytes=270000-320000
                         rangeSwitch = 2;
                         String temp1 = rangBytes.substring(0, rangBytes.indexOf("-"));
-                        String temp2 = rangBytes.substring(rangBytes.indexOf("-") + 1, rangBytes.length());
+                        String temp2 = rangBytes.substring(rangBytes.indexOf("-") + 1);
                         p = Long.parseLong(temp1);
                         toLength = Long.parseLong(temp2);
                         // 客户端请求的是 270000-320000 之间的字节

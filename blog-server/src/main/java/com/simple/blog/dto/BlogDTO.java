@@ -28,7 +28,7 @@ public class BlogDTO {
 
     private String author;
 
-    private Date updateTime;
+    private String updateTime;
 
     private List<String> searchResult;
 

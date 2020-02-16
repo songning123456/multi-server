@@ -10,6 +10,8 @@ import com.simple.blog.repository.UsersRepository;
 import com.simple.blog.service.BlogService;
 import com.simple.blog.util.HttpServletRequestUtil;
 import com.sn.common.dto.CommonDTO;
+import com.sn.common.util.ClassConvertUtil;
+import com.sn.common.util.DateUtil;
 import com.sn.common.util.MapConvertEntityUtil;
 import com.simple.blog.vo.BlogVO;
 import com.simple.blog.vo.LabelVO;
@@ -63,18 +65,11 @@ public class MysqlBlogServiceImpl implements BlogService {
         String kinds = commonVO.getCondition().getKinds();
         Sort sort = Sort.by(Sort.Direction.DESC, "update_time");
         Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
-        Page<Map<String, Object>> blogPage = blogRepository.findAbstract(kinds, pageable);
-        List<Map<String, Object>> src = blogPage.getContent();
+        Page<Blog> blogPage = blogRepository.findAbstract(kinds, pageable);
+        List<Blog> src = blogPage.getContent();
         Long total = blogPage.getTotalElements();
         List<BlogDTO> target = new ArrayList<>();
-        for (Map<String, Object> map : src) {
-            try {
-                BlogDTO blogDTO = (BlogDTO) MapConvertEntityUtil.mapToEntity(BlogDTO.class, map);
-                target.add(blogDTO);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        ClassConvertUtil.populateList(src, target, BlogDTO.class);
         commonDTO.setData(target);
         commonDTO.setTotal(total);
         return commonDTO;
@@ -94,18 +89,11 @@ public class MysqlBlogServiceImpl implements BlogService {
         Integer pageRecordNum = commonVO.getPageRecordNum();
         Sort sort = Sort.by(Sort.Direction.DESC, "update_time");
         Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
-        Page<Map<String, Object>> blogPage = blogRepository.findByUserIdNative(userId, pageable);
-        List<Map<String, Object>> src = blogPage.getContent();
+        Page<Blog> blogPage = blogRepository.findByUserIdNative(userId, pageable);
+        List<Blog> src = blogPage.getContent();
         Long total = blogPage.getTotalElements();
         List<BlogDTO> target = new ArrayList<>();
-        for (Map<String, Object> map : src) {
-            try {
-                BlogDTO blogDTO = (BlogDTO) MapConvertEntityUtil.mapToEntity(BlogDTO.class, map);
-                target.add(blogDTO);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        ClassConvertUtil.populateList(src, target, BlogDTO.class);
         commonDTO.setData(target);
         commonDTO.setTotal(total);
         return commonDTO;
@@ -130,18 +118,11 @@ public class MysqlBlogServiceImpl implements BlogService {
         Integer pageRecordNum = commonVO.getPageRecordNum();
         Sort sort = Sort.by(Sort.Direction.DESC, "update_time");
         Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
-        Page<Map<String, Object>> blogPage = blogRepository.findByIdNative(articleIds, pageable);
-        List<Map<String, Object>> src = blogPage.getContent();
+        Page<Blog> blogPage = blogRepository.findByIdNative(articleIds, pageable);
+        List<Blog> src = blogPage.getContent();
         Long total = blogPage.getTotalElements();
         List<BlogDTO> target = new ArrayList<>();
-        for (Map<String, Object> map : src) {
-            try {
-                BlogDTO blogDTO = (BlogDTO) MapConvertEntityUtil.mapToEntity(BlogDTO.class, map);
-                target.add(blogDTO);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        ClassConvertUtil.populateList(src, target, BlogDTO.class);
         commonDTO.setData(target);
         commonDTO.setTotal(total);
         return commonDTO;
@@ -151,15 +132,11 @@ public class MysqlBlogServiceImpl implements BlogService {
     public CommonDTO<BlogDTO> getContent(CommonVO<BlogVO> commonVO) {
         CommonDTO<BlogDTO> commonDTO = new CommonDTO<>();
         String id = commonVO.getCondition().getId();
-        Map<String, Object> blog = blogRepository.findByIdNative(id);
-        Integer readTimes = (Integer) blog.get("readTimes");
+        Blog blog = blogRepository.findByIdNative(id);
+        Integer readTimes = blog.getReadTimes();
         blogRepository.updateReadTimes(id, ++readTimes);
-        BlogDTO blogDTO = null;
-        try {
-            blogDTO = (BlogDTO) MapConvertEntityUtil.mapToEntity(BlogDTO.class, blog);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        BlogDTO blogDTO = new BlogDTO();
+        ClassConvertUtil.populate(blog, blogDTO);
         commonDTO.setData(Collections.singletonList(blogDTO));
         commonDTO.setTotal(1L);
         return commonDTO;
@@ -169,17 +146,10 @@ public class MysqlBlogServiceImpl implements BlogService {
     public CommonDTO<BlogDTO> getHotArticle(CommonVO<BlogVO> commonVO) {
         CommonDTO<BlogDTO> commonDTO = new CommonDTO<>();
         String kinds = commonVO.getCondition().getKinds();
-        List<Map<String, Object>> list = blogRepository.findHotArticle(kinds);
-        List<BlogDTO> blogDTOS = new ArrayList<>();
-        list.forEach(item -> {
-            try {
-                BlogDTO blogDTO = (BlogDTO) MapConvertEntityUtil.mapToEntity(BlogDTO.class, item);
-                blogDTOS.add(blogDTO);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        commonDTO.setData(blogDTOS);
+        List<Blog> src = blogRepository.findHotArticle(kinds);
+        List<BlogDTO> target = new ArrayList<>();
+        ClassConvertUtil.populateList(src, target, BlogDTO.class);
+        commonDTO.setData(target);
         return commonDTO;
     }
 
@@ -191,15 +161,15 @@ public class MysqlBlogServiceImpl implements BlogService {
         Integer pageRecordNum = commonVO.getPageRecordNum();
         Sort sort = Sort.by(Sort.Direction.DESC, "update_time");
         Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
-        List<Map<String, Object>> list = blogRepository.findByLikeContentNative(content, pageable);
+        List<Blog> list = blogRepository.findByLikeContentNative(content, pageable);
         List<BlogDTO> blogDTOS = new ArrayList<>();
         list.forEach(item -> {
-            String id = (String) item.get("id");
-            String title = (String) item.get("title");
-            String author = (String) item.get("author");
-            Date updateTime = (Date) item.get("updateTime");
-            String txt = (String) item.get("content");
-            String userId = (String) item.get("userId");
+            String id = item.getId();
+            String title = item.getTitle();
+            String author = item.getAuthor();
+            String updateTime = DateUtil.dateToStr(item.getUpdateTime(), "yyyy-MM-dd HH:mm:ss");
+            String txt = item.getContent();
+            String userId = item.getUserId();
             List<String> searchResult = this.matchPattern(txt, content);
             BlogDTO blogDTO = BlogDTO.builder().id(id).title(title).author(author).updateTime(updateTime).content(txt).searchResult(searchResult).userId(userId).build();
             blogDTOS.add(blogDTO);

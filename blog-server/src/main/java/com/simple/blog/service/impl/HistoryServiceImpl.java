@@ -1,6 +1,7 @@
 package com.simple.blog.service.impl;
 
 import com.simple.blog.constant.CommonConstant;
+import com.simple.blog.entity.Blog;
 import com.sn.common.constant.HttpStatus;
 import com.simple.blog.dto.HistoryDTO;
 import com.simple.blog.entity.History;
@@ -62,8 +63,8 @@ public class HistoryServiceImpl implements HistoryService {
         History history;
         if (CommonConstant.READ_ARTICLE.equals(title)) {
             String articleId = commonVO.getCondition().getArticleId();
-            Map<String, Object> map = blogRepository.findByIdNative(articleId);
-            title = CssStyleUtil.spans(title, " ", String.valueOf(map.get("title")));
+            Blog blog = blogRepository.findByIdNative(articleId);
+            title = CssStyleUtil.spans(title, " ", blog.getTitle());
             history = History.builder().title(title).articleId(articleId).username(username).time(time).description(description).build();
         } else {
             title = CssStyleUtil.spans(title);
