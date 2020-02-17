@@ -47,28 +47,19 @@ public class HistoryServiceImpl implements HistoryService {
     public CommonDTO<HistoryDTO> insertHistory(CommonVO<HistoryVO> commonVO) {
         CommonDTO<HistoryDTO> commonDTO = new CommonDTO<>();
         String title = commonVO.getCondition().getTitle();
-        String username;
-        if (StringUtils.isEmpty(commonVO.getCondition().getUsername())) {
-            username = httpServletRequestUtil.getUsername();
-        } else {
-            username = commonVO.getCondition().getUsername();
-        }
+        String username = httpServletRequestUtil.getUsername();
         if (StringUtils.isEmpty(username)) {
             commonDTO.setStatus(HttpStatus.HTTP_UNAUTHORIZED);
             commonDTO.setMessage("token无效,请重新登陆");
             return commonDTO;
         }
-        String time = DateUtil.dateToStr(new Date(), CommonConstant.DEFAULT_DATETIME_PATTERN);
-        String description = CssStyleUtil.boldAndItalicFont(username) + " 提交于 " + CssStyleUtil.boldAndItalicFont(time);
         History history;
         if (CommonConstant.READ_ARTICLE.equals(title)) {
             String articleId = commonVO.getCondition().getArticleId();
             Map<String, Object> map = blogRepository.findByIdNative(articleId);
-            title = CssStyleUtil.spans(title, " ", String.valueOf(map.get("title")));
-            history = History.builder().title(title).articleId(articleId).username(username).time(time).description(description).build();
+            history = History.builder().title(title).articleId(articleId).username(username).updateTime(new Date()).description(map.get("title").toString()).build();
         } else {
-            title = CssStyleUtil.spans(title);
-            history = History.builder().title(title).username(username).time(time).description(description).build();
+            history = History.builder().title(title).username(username).updateTime(new Date()).build();
         }
         historyRepository.save(history);
         return commonDTO;
@@ -85,13 +76,13 @@ public class HistoryServiceImpl implements HistoryService {
             commonDTO.setMessage("token无效,请重新登陆");
             return commonDTO;
         }
-        Sort sort = Sort.by(Sort.Direction.DESC, "time");
+        Sort sort = Sort.by(Sort.Direction.DESC, "update_time");
         Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
         Page<History> historyPage = historyRepository.findHistoryNative(username, pageable);
         List<History> list = historyPage.getContent();
         List<HistoryDTO> target = new ArrayList<>();
         ClassConvertUtil.populateList(list, target, HistoryDTO.class);
-        commonDTO.setTotal((long) target.size());
+        commonDTO.setTotal(historyPage.getTotalElements());
         commonDTO.setData(target);
         return commonDTO;
     }

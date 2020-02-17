@@ -26,14 +26,14 @@ public class HistoryController {
     @Autowired
     private HistoryService historyService;
 
-    @PostMapping("/insert")
+    @PostMapping("/insertHistory")
     @ControllerAspectAnnotation(description = "插入记录信息")
     public CommonDTO<HistoryDTO> inserts(@RequestBody CommonVO<HistoryVO> commonVO) {
         CommonDTO<HistoryDTO> commonDTO = historyService.insertHistory(commonVO);
         return commonDTO;
     }
 
-    @PostMapping("/get")
+    @PostMapping("/getHistory")
     @ControllerAspectAnnotation(description = "获取个人信息")
     public CommonDTO<HistoryDTO> getHistoryInfo(@RequestBody CommonVO<HistoryVO> commonVO) {
         CommonDTO<HistoryDTO> commonDTO = historyService.getHistory(commonVO);

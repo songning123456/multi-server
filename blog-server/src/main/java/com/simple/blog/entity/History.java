@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @author songning
@@ -38,6 +39,6 @@ public class History {
     @Column(name = "description", columnDefinition = "VARCHAR(255) COMMENT '描述详情'")
     private String description;
 
-    @Column(name = "time", columnDefinition = "VARCHAR(50) NOT NULL COMMENT '时间'")
-    private String time;
+    @Column(name = "updateTime", columnDefinition = "DATETIME NOT NULL COMMENT '更新时间'")
+    private Date updateTime;
 }

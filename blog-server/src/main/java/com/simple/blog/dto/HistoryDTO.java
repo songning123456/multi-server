@@ -20,7 +20,7 @@ public class HistoryDTO {
 
     private String description;
 
-    private String time;
+    private String updateTime;
 
     private String articleId;
 
