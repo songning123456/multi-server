@@ -2,6 +2,7 @@ package com.simple.blog.service.impl;
 
 import com.simple.blog.dto.LikeTagDTO;
 import com.simple.blog.entity.LikeTag;
+import com.simple.blog.jpql.JpqlDao;
 import com.simple.blog.repository.LikeTagRepository;
 import com.simple.blog.service.LikeTagService;
 import com.sn.common.util.ClassConvertUtil;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,6 +31,8 @@ public class LikeTagServiceImpl implements LikeTagService {
     private LikeTagRepository likeTagRepository;
     @Autowired
     private HttpServletRequestUtil httpServletRequestUtil;
+    @Autowired
+    private JpqlDao jpqlDao;
 
     @Override
     public CommonDTO<LikeTagDTO> getTag(CommonVO<LikeTagVO> commonVO) {
@@ -69,20 +73,29 @@ public class LikeTagServiceImpl implements LikeTagService {
         }
         String articleId = commonVO.getCondition().getArticleId();
         Integer love = commonVO.getCondition().getLove();
+        Integer hasRead = commonVO.getCondition().getHasRead();
         LikeTagDTO likeTagDTO = new LikeTagDTO();
         // 更新 love 按钮； 否則更新是否已读按钮
+        Map<String, Object> params = new HashMap<>(2);
         if (love != null) {
-            if ("1".equals(String.valueOf(love))) {
-                likeTagRepository.updateTagLikeByUsernameAndArticleIdNative(username, articleId, 0);
-                likeTagDTO.setLove(0);
-            } else {
-                likeTagRepository.updateTagLikeByUsernameAndArticleIdNative(username, articleId, 1);
-                likeTagDTO.setLove(1);
-            }
+            params.put("love", love + 10);
+        }
+        if (hasRead != null) {
+            params.put("hasRead", hasRead + 10);
+        }
+        params.put("username", username);
+        params.put("articleId", articleId);
+        jpqlDao.update("likeTagJPQL.updateLikeTag", params);
+        if (love != null) {
+            LikeTag likeTag = likeTagRepository.getNative(username, articleId);
+            likeTagDTO.setLove(likeTag.getLove());
             Map<String, Object> dataExt = likeTagRepository.sumByArticleIdNative(articleId);
             commonDTO.setDataExt(dataExt);
-        } else {
-            likeTagRepository.updateHasReadByUsernameAndArticleIdNative(username, articleId);
+        }
+        if (hasRead != null) {
+            LikeTag likeTag = likeTagRepository.getNative(username, articleId);
+            likeTagDTO.setHasRead(likeTag.getHasRead());
+            likeTag.setHasRead(likeTag.getHasRead());
         }
         commonDTO.setData(Collections.singletonList(likeTagDTO));
         return commonDTO;

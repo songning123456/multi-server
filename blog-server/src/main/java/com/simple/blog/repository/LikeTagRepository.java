@@ -24,16 +24,6 @@ public interface LikeTagRepository extends JpaRepository<LikeTag, Long> {
     @Query(value = "select SUM(love) as tags from like_tag where article_id = ?1", nativeQuery = true)
     Map<String, Object> sumByArticleIdNative(String articleId);
 
-    @Modifying
-    @Transactional
-    @Query(value = "update like_tag set love = ?3 where username = ?1 and article_id = ?2", nativeQuery = true)
-    void updateTagLikeByUsernameAndArticleIdNative(String username, String articleId, Integer love);
-
-    @Modifying
-    @Transactional
-    @Query(value = "update like_tag set has_read = 1 where username = ?1 and article_id = ?2", nativeQuery = true)
-    void updateHasReadByUsernameAndArticleIdNative(String username, String articleId);
-
     @Query(value = "select article_id from like_tag where username = ?1 and love = 1", nativeQuery = true)
     List<String> getArticleIdByUserNameAndLoveNative(String username);
 

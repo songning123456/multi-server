@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jpa module="likeTagJPQL">
+    <jpql id="updateLikeTag">
+        update like_tag set
+        #if($love)
+        love = :love - 10,
+        #end
+        #if($hasRead)
+        has_read = :hasRead - 10,
+        #end
+        id = id
+        where
+        1 = 1
+        #if($username)
+        and username = :username
+        #end
+        #if($articleId)
+        and article_id = :articleId
+        #end
+    </jpql>
+</jpa>
