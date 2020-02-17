@@ -33,4 +33,15 @@ public class BlogDTO {
     private List<String> searchResult;
 
     private String userId;
+
+    private Tag tag;
+
+    @Data
+    public class Tag {
+        private Integer sum;
+
+        private Integer hasRead;
+
+        private Integer love;
+    }
 }

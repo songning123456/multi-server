@@ -26,13 +26,6 @@ public class LikeTagController {
     @Autowired
     private LikeTagService likeTagService;
 
-    @PostMapping("/getTag")
-    @ControllerAspectAnnotation(description = "获取标签")
-    public CommonDTO<LikeTagDTO> getTags(@RequestBody CommonVO<LikeTagVO> commonVO) {
-        CommonDTO<LikeTagDTO> commonDTO = likeTagService.getTag(commonVO);
-        return commonDTO;
-    }
-
     @PostMapping("/updateTag")
     @ControllerAspectAnnotation(description = "修改标签")
     public CommonDTO<LikeTagDTO> updateTags(@RequestBody CommonVO<LikeTagVO> commonVO) {

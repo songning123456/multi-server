@@ -12,7 +12,5 @@ import com.sn.common.vo.CommonVO;
  */
 public interface LikeTagService {
 
-    CommonDTO<LikeTagDTO> getTag(CommonVO<LikeTagVO> commonVO);
-
     CommonDTO<LikeTagDTO> updateTag(CommonVO<LikeTagVO> commonVO);
 }

@@ -1,5 +1,7 @@
 package com.simple.blog.service.impl;
 
+import com.simple.blog.dto.LikeTagDTO;
+import com.simple.blog.entity.LikeTag;
 import com.sn.common.constant.HttpStatus;
 import com.simple.blog.dto.BlogDTO;
 import com.simple.blog.entity.Blog;
@@ -72,7 +74,14 @@ public class MysqlBlogServiceImpl implements BlogService {
         BlogDTO blogDTO;
         for (Map<String, Object> item : src) {
             blogDTO = new BlogDTO();
-            blogDTO.setId(item.get("id").toString());
+            String articleId = item.get("id").toString();
+            Map<String, Object> tagMap = this.getLikeTag(articleId);
+            BlogDTO.Tag innerTag = blogDTO.new Tag();
+            innerTag.setHasRead(Integer.parseInt(tagMap.get("hasRead").toString()));
+            innerTag.setLove(Integer.parseInt(tagMap.get("love").toString()));
+            innerTag.setSum(Integer.parseInt(tagMap.get("sum").toString()));
+            blogDTO.setTag(innerTag);
+            blogDTO.setId(articleId);
             blogDTO.setUserId(item.get("userId").toString());
             blogDTO.setAuthor(item.get("author").toString());
             blogDTO.setTitle(item.get("title").toString());
@@ -105,7 +114,14 @@ public class MysqlBlogServiceImpl implements BlogService {
         BlogDTO blogDTO;
         for (Map<String, Object> item : src) {
             blogDTO = new BlogDTO();
-            blogDTO.setId(item.get("id").toString());
+            String articleId = item.get("id").toString();
+            blogDTO.setId(articleId);
+            Map<String, Object> tagMap = this.getLikeTag(articleId);
+            BlogDTO.Tag innerTag = blogDTO.new Tag();
+            innerTag.setHasRead(Integer.parseInt(tagMap.get("hasRead").toString()));
+            innerTag.setLove(Integer.parseInt(tagMap.get("love").toString()));
+            innerTag.setSum(Integer.parseInt(tagMap.get("sum").toString()));
+            blogDTO.setTag(innerTag);
             blogDTO.setUserId(item.get("userId").toString());
             blogDTO.setAuthor(item.get("author").toString());
             blogDTO.setTitle(item.get("title").toString());
@@ -143,7 +159,14 @@ public class MysqlBlogServiceImpl implements BlogService {
         BlogDTO blogDTO;
         for (Map<String, Object> item : src) {
             blogDTO = new BlogDTO();
-            blogDTO.setId(item.get("id").toString());
+            String articleId = item.get("id").toString();
+            blogDTO.setId(articleId);
+            Map<String, Object> tagMap = this.getLikeTag(articleId);
+            BlogDTO.Tag innerTag = blogDTO.new Tag();
+            innerTag.setHasRead(Integer.parseInt(tagMap.get("hasRead").toString()));
+            innerTag.setLove(Integer.parseInt(tagMap.get("love").toString()));
+            innerTag.setSum(Integer.parseInt(tagMap.get("sum").toString()));
+            blogDTO.setTag(innerTag);
             blogDTO.setUserId(item.get("userId").toString());
             blogDTO.setAuthor(item.get("author").toString());
             blogDTO.setTitle(item.get("title").toString());
@@ -206,7 +229,14 @@ public class MysqlBlogServiceImpl implements BlogService {
         BlogDTO blogDTO;
         for (Map<String, Object> item : src) {
             blogDTO = new BlogDTO();
-            blogDTO.setId(item.get("id").toString());
+            String articleId = item.get("id").toString();
+            blogDTO.setId(articleId);
+            Map<String, Object> tagMap = this.getLikeTag(articleId);
+            BlogDTO.Tag innerTag = blogDTO.new Tag();
+            innerTag.setHasRead(Integer.parseInt(tagMap.get("hasRead").toString()));
+            innerTag.setLove(Integer.parseInt(tagMap.get("love").toString()));
+            innerTag.setSum(Integer.parseInt(tagMap.get("sum").toString()));
+            blogDTO.setTag(innerTag);
             blogDTO.setUserId(item.get("userId").toString());
             blogDTO.setAuthor(item.get("author").toString());
             blogDTO.setTitle(item.get("title").toString());
@@ -266,5 +296,27 @@ public class MysqlBlogServiceImpl implements BlogService {
             likeTagRepository.deleteByArticleId(id);
         }
         return commonDTO;
+    }
+
+    private Map<String, Object> getLikeTag(String articleId) {
+        Map<String, Object> result = new HashMap<>(2);
+        String username = httpServletRequestUtil.getUsername();
+        LikeTag likeTag = likeTagRepository.getNative(username, articleId);
+        if (likeTag == null) {
+            likeTag = new LikeTag();
+            likeTag.setArticleId(articleId);
+            likeTag.setHasRead(0);
+            result.put("hasRead", 0);
+            likeTag.setLove(0);
+            result.put("love", 0);
+            likeTag.setUsername(username);
+            likeTagRepository.save(likeTag);
+        } else {
+            result.put("hasRead", likeTag.getHasRead());
+            result.put("love", likeTag.getLove());
+        }
+        Map<String, Object> sumMap = likeTagRepository.sumByArticleIdNative(articleId);
+        result.put("sum", sumMap.get("tags"));
+        return result;
     }
 }

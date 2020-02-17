@@ -35,34 +35,6 @@ public class LikeTagServiceImpl implements LikeTagService {
     private JpqlDao jpqlDao;
 
     @Override
-    public CommonDTO<LikeTagDTO> getTag(CommonVO<LikeTagVO> commonVO) {
-        CommonDTO<LikeTagDTO> commonDTO = new CommonDTO<>();
-        String username = httpServletRequestUtil.getUsername();
-        if (StringUtils.isEmpty(username)) {
-            commonDTO.setStatus(HttpStatus.HTTP_UNAUTHORIZED);
-            commonDTO.setMessage("token无效,请重新登陆");
-            return commonDTO;
-        }
-        String articleId = commonVO.getCondition().getArticleId();
-        LikeTagDTO likeTagDTO = new LikeTagDTO();
-        LikeTag likeTag = likeTagRepository.getNative(username, articleId);
-        if (likeTag == null) {
-            likeTag = new LikeTag();
-            likeTag.setArticleId(articleId);
-            likeTag.setHasRead(0);
-            likeTag.setLove(0);
-            likeTag.setUsername(username);
-            likeTagRepository.save(likeTag);
-        }
-        ClassConvertUtil.populate(likeTag, likeTagDTO);
-        Map<String, Object> dataExt = likeTagRepository.sumByArticleIdNative(articleId);
-        commonDTO.setDataExt(dataExt);
-        commonDTO.setData(Collections.singletonList(likeTagDTO));
-        return commonDTO;
-    }
-
-
-    @Override
     public CommonDTO<LikeTagDTO> updateTag(CommonVO<LikeTagVO> commonVO) {
         CommonDTO<LikeTagDTO> commonDTO = new CommonDTO<>();
         String username = httpServletRequestUtil.getUsername();
