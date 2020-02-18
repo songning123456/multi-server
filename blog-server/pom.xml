@@ -84,6 +84,16 @@
             <artifactId>feign-slf4j</artifactId>
             <version>9.7.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>4.3.18.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <version>4.3.18.RELEASE</version>
+        </dependency>
     </dependencies>
 
 
