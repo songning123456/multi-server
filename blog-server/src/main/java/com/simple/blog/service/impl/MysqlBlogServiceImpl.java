@@ -1,7 +1,7 @@
 package com.simple.blog.service.impl;
 
-import com.simple.blog.dto.LikeTagDTO;
 import com.simple.blog.entity.LikeTag;
+import com.simple.blog.jpql.JpqlDao;
 import com.sn.common.constant.HttpStatus;
 import com.simple.blog.dto.BlogDTO;
 import com.simple.blog.entity.Blog;
@@ -12,9 +12,7 @@ import com.simple.blog.repository.UsersRepository;
 import com.simple.blog.service.BlogService;
 import com.simple.blog.util.HttpServletRequestUtil;
 import com.sn.common.dto.CommonDTO;
-import com.sn.common.util.ClassConvertUtil;
 import com.sn.common.util.DateUtil;
-import com.sn.common.util.MapConvertEntityUtil;
 import com.simple.blog.vo.BlogVO;
 import com.simple.blog.vo.LabelVO;
 import com.sn.common.vo.CommonVO;
@@ -27,8 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author sn
@@ -46,6 +42,8 @@ public class MysqlBlogServiceImpl implements BlogService {
     private HistoryRepository historyRepository;
     @Autowired
     private HttpServletRequestUtil httpServletRequestUtil;
+    @Autowired
+    private JpqlDao jpqlDao;
 
     @Override
     public CommonDTO<BlogDTO> saveArticle(CommonVO<BlogVO> commonVO) {
@@ -218,16 +216,26 @@ public class MysqlBlogServiceImpl implements BlogService {
     @Override
     public CommonDTO<BlogDTO> getHighlightArticle(CommonVO<BlogVO> commonVO) {
         CommonDTO<BlogDTO> commonDTO = new CommonDTO<>();
-        String content = commonVO.getCondition().getContent();
+        String param = commonVO.getCondition().getParam();
+        String type = commonVO.getCondition().getType();
         Integer recordStartNo = commonVO.getRecordStartNo();
         Integer pageRecordNum = commonVO.getPageRecordNum();
-        Sort sort = Sort.by(Sort.Direction.DESC, "update_time");
-        Pageable pageable = PageRequest.of(recordStartNo, pageRecordNum, sort);
-        Page<Map<String, Object>> page = blogRepository.findByLikeContentNative(content, pageable);
-        List<Map<String, Object>> src = page.getContent();
+        Map<String, Object> params = new HashMap<>(2);
+        if ("content".equals(type)) {
+            params.put("content", param);
+        } else if ("title".equals(type)) {
+            params.put("title", param);
+        } else if ("author".equals(type)) {
+            params.put("author", param);
+        }
+        params.put("offset", recordStartNo * pageRecordNum);
+        params.put("pageRecordNum", pageRecordNum);
+        List src = jpqlDao.query("blogJPQL.queryBlog", params);
+        long total = jpqlDao.count("blogJPQL.countBlog", params);
         List<BlogDTO> target = new ArrayList<>();
         BlogDTO blogDTO;
-        for (Map<String, Object> item : src) {
+        for (Object object : src) {
+            Map<String, Object> item = (Map<String, Object>) object;
             blogDTO = new BlogDTO();
             String articleId = item.get("id").toString();
             blogDTO.setId(articleId);
@@ -241,13 +249,10 @@ public class MysqlBlogServiceImpl implements BlogService {
             blogDTO.setAuthor(item.get("author").toString());
             blogDTO.setTitle(item.get("title").toString());
             blogDTO.setUpdateTime(DateUtil.dateToStr((Date) item.get("updateTime"), "yyyy-MM-dd HH:mm:ss"));
-            String txt = (String) item.get("content");
-            List<String> searchResult = this.matchPattern(txt, content);
-            blogDTO.setSearchResult(searchResult);
             target.add(blogDTO);
         }
         commonDTO.setData(target);
-        commonDTO.setTotal(page.getTotalElements());
+        commonDTO.setTotal(total);
         return commonDTO;
     }
 
@@ -256,34 +261,6 @@ public class MysqlBlogServiceImpl implements BlogService {
         String labelName = vo.getCondition().getLabelName();
         Long articleTotal = blogRepository.countAllByKinds(labelName);
         return articleTotal;
-    }
-
-    private List<String> matchPattern(String content, String regex) {
-        List<String> result = new ArrayList<>();
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(content);
-        int len = content.length();
-        while (matcher.find()) {
-            StringBuilder stringBuilder = new StringBuilder();
-            int start = matcher.start();
-            int end = matcher.end();
-            int startBefore, endAfter;
-            if (start > 8) {
-                startBefore = start - 8;
-            } else {
-                startBefore = 0;
-            }
-            if (end + 8 < len) {
-                endAfter = end + 8;
-            } else {
-                endAfter = len;
-            }
-            String text1 = content.substring(startBefore, start);
-            String text2 = "<span style='color: #ffa500;font-weight: bold;font-size: 16px;'>" + matcher.group() + "</span>";
-            String text3 = content.substring(end + 1, endAfter);
-            result.add(stringBuilder.append("...").append(text1).append(text2).append(text3).append("...").toString());
-        }
-        return result;
     }
 
     @Override

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jpa module="blogJPQL">
+    <jpql id="queryBlog">
+        select
+        id, title, author, update_time as updateTime, content, user_id as userId
+        from blog
+        where 1=1
+        #if ($content)
+        and content like concat('%', :content, '%')
+        #end
+        #if ($title)
+        and title like concat('%', :title, '%')
+        #end
+        #if ($author)
+        and author like concat('%', :author, '%')
+        #end
+        order by update_time asc
+        #if($offset &amp;&amp; $pageRecordNum)
+        limit :offset, :pageRecordNum
+        #end
+        #if(!$offset &amp;&amp; $pageRecordNum)
+        limit :pageRecordNum
+        #end
+    </jpql>
+    <jpql id="countBlog">
+        select count(1)
+        from blog
+        where 1=1
+        #if ($content)
+        and content like concat('%', :content, '%')
+        #end
+        #if ($title)
+        and title like concat('%', :title, '%')
+        #end
+        #if ($author)
+        and author like concat('%', :author, '%')
+        #end
+    </jpql>
+</jpa>

@@ -1,6 +1,7 @@
 package com.simple.blog.service.impl;
 
 import com.simple.blog.constant.CommonConstant;
+import com.simple.blog.jpql.JpqlDao;
 import com.sn.common.constant.HttpStatus;
 import com.simple.blog.dto.SystemConfigDTO;
 import com.simple.blog.entity.SystemConfig;
@@ -42,6 +43,8 @@ public class SystemConfigServiceImpl implements SystemConfigService {
     private HttpServletRequestUtil httpServletRequestUtil;
     @Autowired
     private JpqlParser jpqlParser;
+    @Autowired
+    private JpqlDao jpqlDao;
     @PersistenceContext
     EntityManager entityManager;
 
@@ -66,12 +69,10 @@ public class SystemConfigServiceImpl implements SystemConfigService {
         params.put("configValue", configValue);
         params.put("valueDescription", valueDescription);
         params.put("username", username);
-        String getSql = jpqlParser.parse(new ParserParameter("systemConfigJpql.getSystemConfig", params)).getExecutableSql();
-        List<SystemConfig> systemConfigList = entityManager.createNativeQuery(getSql, SystemConfig.class).getResultList();
-        String countSql = jpqlParser.parse(new ParserParameter("systemConfigJpql.countSystemConfig", params)).getExecutableSql();
-        long total = ((BigInteger) entityManager.createNativeQuery(countSql).getSingleResult()).longValue();
+        List<SystemConfig> src = jpqlDao.query("systemConfigJpql.getSystemConfig", params, SystemConfig.class);
+        long total = jpqlDao.count("systemConfigJpql.countSystemConfig", params);
         List<SystemConfigDTO> target = new ArrayList<>();
-        ClassConvertUtil.populateList(systemConfigList, target, SystemConfigDTO.class);
+        ClassConvertUtil.populateList(src, target, SystemConfigDTO.class);
         commonDTO.setData(target);
         commonDTO.setTotal(total);
         return commonDTO;
