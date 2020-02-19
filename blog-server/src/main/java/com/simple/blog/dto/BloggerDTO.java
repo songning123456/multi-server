@@ -31,4 +31,6 @@ public class BloggerDTO {
     private Date updateTime;
 
     private String headPortrait;
+
+    private String userId;
 }

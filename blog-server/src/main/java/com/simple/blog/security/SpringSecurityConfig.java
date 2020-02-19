@@ -33,7 +33,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        String[] noLoginUrls = new String[]{"/hello", "/history/insert", "/register/all", "/video/original", "/image/original", "/image/save", "/users/exist", "/login", "/loginInfo", "/logoutSuccess", "/thirdPart/gitHub"};
+        String[] noLoginUrls = new String[]{"/hello","/webSocket/wechat", "/history/insert", "/register/all", "/video/original", "/image/original", "/image/save", "/users/exist", "/login", "/loginInfo", "/logoutSuccess", "/thirdPart/gitHub"};
         /** JWT拦截器*/
         JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter = new JwtAuthenticationTokenFilter();
         /** 将JWT拦截器添加到UsernamePasswordAuthenticationFilter之前*/

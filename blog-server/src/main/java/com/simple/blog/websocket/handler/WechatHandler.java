@@ -1,7 +1,5 @@
 package com.simple.blog.websocket.handler;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -31,6 +29,7 @@ public class WechatHandler implements org.springframework.web.socket.WebSocketHa
     @Override
     public void afterConnectionEstablished(WebSocketSession webSocketSession) {
         log.info("webSocket打开: {}", webSocketSession.getId());
+        WECHAT_MAP.put(webSocketSession.getId(), webSocketSession);
     }
 
     @Override
@@ -40,12 +39,15 @@ public class WechatHandler implements org.springframework.web.socket.WebSocketHa
             if (PING.equals(payloadStr)) {
                 webSocketSession.sendMessage(new TextMessage(PONG));
             } else {
-                JSONObject jsonObject = JSON.parseObject(payloadStr);
-                String id = jsonObject.get("userId").toString();
-                WECHAT_MAP.put(id, webSocketSession);
                 for (Map.Entry<String, WebSocketSession> entry : WECHAT_MAP.entrySet()) {
                     WebSocketSession wss = entry.getValue();
-                    wss.sendMessage(new TextMessage(payloadStr));
+                    if (wss.isOpen()) {
+                        try {
+                            wss.sendMessage(new TextMessage(payloadStr));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
@@ -54,12 +56,13 @@ public class WechatHandler implements org.springframework.web.socket.WebSocketHa
     }
 
     @Override
-    public void handleTransportError(WebSocketSession webSocketSession, Throwable throwable) throws Exception {
+    public void handleTransportError(WebSocketSession webSocketSession, Throwable throwable) {
+        WECHAT_MAP.remove(webSocketSession.getId());
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus) {
-
+        WECHAT_MAP.remove(webSocketSession.getId());
     }
 
     @Override

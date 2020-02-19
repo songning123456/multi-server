@@ -24,7 +24,7 @@ public interface BloggerRepository extends JpaRepository<Blogger, String> {
     @Query(value = "select author, real_name as realName, age, email, gender, head_portrait as headPortrait, motto,profession,telephone from blogger where user_id = ?1", nativeQuery = true)
     List<Map<String, Object>> findByUserIdNative(String userId);
 
-    @Query(value = "select author, real_name as realName, age, email, gender, head_portrait as headPortrait, motto,profession,telephone from blogger where username = ?1", nativeQuery = true)
+    @Query(value = "select author, real_name as realName, age, email, gender, head_portrait as headPortrait, motto,profession,telephone, user_id as userId from blogger where username = ?1", nativeQuery = true)
     List<Map<String, Object>> findByUsernameNative(String username);
 
     @Transactional

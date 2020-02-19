@@ -14,7 +14,7 @@ import java.util.Map;
  * description
  */
 @Slf4j
-public class HandShake implements HandshakeInterceptor {
+public class HandShakeInterceptor implements HandshakeInterceptor {
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                    WebSocketHandler wsHandler, Map<String, Object> attributes) {
