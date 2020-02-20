@@ -1,6 +1,6 @@
 package com.simple.blog.controller;
 
-import com.sn.common.annotation.ControllerAspectAnnotation;
+import com.sn.common.annotation.AControllerAspect;
 import com.simple.blog.dto.HistoryDTO;
 import com.simple.blog.service.HistoryService;
 import com.simple.blog.vo.HistoryVO;
@@ -27,14 +27,14 @@ public class HistoryController {
     private HistoryService historyService;
 
     @PostMapping("/insertHistory")
-    @ControllerAspectAnnotation(description = "插入记录信息")
+    @AControllerAspect(description = "插入记录信息")
     public CommonDTO<HistoryDTO> inserts(@RequestBody CommonVO<HistoryVO> commonVO) {
         CommonDTO<HistoryDTO> commonDTO = historyService.insertHistory(commonVO);
         return commonDTO;
     }
 
     @PostMapping("/getHistory")
-    @ControllerAspectAnnotation(description = "获取个人信息")
+    @AControllerAspect(description = "获取个人信息")
     public CommonDTO<HistoryDTO> getHistoryInfo(@RequestBody CommonVO<HistoryVO> commonVO) {
         CommonDTO<HistoryDTO> commonDTO = historyService.getHistory(commonVO);
         return commonDTO;

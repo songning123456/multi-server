@@ -1,6 +1,6 @@
 package com.simple.blog.controller;
 
-import com.sn.common.annotation.ControllerAspectAnnotation;
+import com.sn.common.annotation.AControllerAspect;
 import com.simple.blog.dto.BloggerDTO;
 import com.simple.blog.service.BloggerService;
 import com.simple.blog.vo.BloggerVO;
@@ -25,14 +25,14 @@ public class BloggerController {
     private BloggerService bloggerService;
 
     @PostMapping("/getBlogger")
-    @ControllerAspectAnnotation(description = "获取登陆信息")
+    @AControllerAspect(description = "获取登陆信息")
     public CommonDTO<BloggerDTO> getBloggerInfo(@RequestBody CommonVO<BloggerVO> commonVO) {
         CommonDTO<BloggerDTO> commonDTO = bloggerService.getBlogger(commonVO);
         return commonDTO;
     }
 
     @PostMapping("/update")
-    @ControllerAspectAnnotation(description = "修改个人信息")
+    @AControllerAspect(description = "修改个人信息")
     public CommonDTO<BloggerDTO> updateBloggers(@RequestBody CommonVO<BloggerVO> commonVO) {
         CommonDTO<BloggerDTO> commonDTO = bloggerService.updateBlogger(commonVO);
         return commonDTO;

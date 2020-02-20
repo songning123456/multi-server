@@ -1,6 +1,6 @@
 package com.simple.blog.controller;
 
-import com.sn.common.annotation.ControllerAspectAnnotation;
+import com.sn.common.annotation.AControllerAspect;
 import com.sn.common.constant.HttpStatus;
 import com.sn.common.dto.CommonDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public class LoginController {
     }
 
     @RequestMapping("/loginInfo")
-    @ControllerAspectAnnotation(description = "未登陆时的情况")
+    @AControllerAspect(description = "未登陆时的情况")
     public <T> CommonDTO<T> loginInfo(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         CommonDTO<T> commonDTO = new CommonDTO<>();
         commonDTO.setMessage("请先登录");
@@ -67,7 +67,7 @@ public class LoginController {
     }
 
     @RequestMapping("/logoutSuccess")
-    @ControllerAspectAnnotation(description = "注销登录成功后跳转的路由")
+    @AControllerAspect(description = "注销登录成功后跳转的路由")
     public <T> CommonDTO<T> logoutSuccess() {
         CommonDTO<T> commonDTO = new CommonDTO<>();
         commonDTO.setMessage("退出成功");

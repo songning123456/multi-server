@@ -1,6 +1,6 @@
 package com.simple.blog.controller;
 
-import com.sn.common.annotation.ControllerAspectAnnotation;
+import com.sn.common.annotation.AControllerAspect;
 import com.simple.blog.configure.ValidateCode;
 import com.sn.common.dto.CommonDTO;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,7 +44,7 @@ public class ValidateCodeController {
         }
     }
 
-    @ControllerAspectAnnotation(description = "生成图片base64")
+    @AControllerAspect(description = "生成图片base64")
     @RequestMapping("/getCaptchaBase64")
     @ResponseBody
     public <T> CommonDTO<T> getCaptchaBase64(HttpServletRequest request, HttpServletResponse response) {

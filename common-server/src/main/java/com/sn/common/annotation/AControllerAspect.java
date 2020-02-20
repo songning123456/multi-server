@@ -8,6 +8,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 @Documented
-public @interface ControllerAspectAnnotation {
+public @interface AControllerAspect {
     String description() default "";
 }

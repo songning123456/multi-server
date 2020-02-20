@@ -2,7 +2,7 @@ package com.simple.blog.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.sn.common.annotation.ControllerAspectAnnotation;
+import com.sn.common.annotation.AControllerAspect;
 import com.simple.blog.dto.MailDTO;
 import com.simple.blog.service.MailService;
 import com.simple.blog.vo.MailVO;
@@ -26,7 +26,7 @@ public class MailController {
     private MailService mailService;
 
     @PostMapping("/send")
-    @ControllerAspectAnnotation(description = "发送邮件")
+    @AControllerAspect(description = "发送邮件")
     public CommonDTO<MailDTO> sendMail(@RequestParam("jsonData") String jsonData, @RequestParam("file") MultipartFile[] files) throws Exception {
         CommonVO<JSONObject> tempVO = JSON.toJavaObject(JSON.parseObject(jsonData), CommonVO.class);
         MailVO mailVO = JSON.toJavaObject(tempVO.getCondition(), MailVO.class);
@@ -38,7 +38,7 @@ public class MailController {
     }
 
     @PostMapping("/draft")
-    @ControllerAspectAnnotation(description = "保存草稿")
+    @AControllerAspect(description = "保存草稿")
     public CommonDTO<MailDTO> saveDrafts(@RequestBody CommonVO<MailVO> commonVO) {
         CommonDTO<MailDTO> commonDTO = mailService.saveDraft(commonVO);
         return commonDTO;

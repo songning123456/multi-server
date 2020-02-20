@@ -1,5 +1,6 @@
 package com.simple.blog.entity;
 
+import com.sn.common.annotation.AClassConvertIgnore;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -22,6 +23,7 @@ public class WechatDialog {
     @Id
     @GeneratedValue(generator = "jpa-uuid")
     @Column(length = 32)
+    @AClassConvertIgnore
     private String id;
 
     @Column(name = "author", columnDefinition = "VARCHAR(64) NOT NULL COMMENT '作者'")

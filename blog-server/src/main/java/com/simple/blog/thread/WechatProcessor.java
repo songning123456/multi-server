@@ -54,26 +54,6 @@ public class WechatProcessor {
         }
     }
 
-    @Async("DialogSelectExecutor")
-    public void asyncDialogSelect(String wssId) {
-        try {
-            List<Map<String, Object>> list = wechatDialogRepository.findNative();
-            if (!list.isEmpty()) {
-                WebSocketSession webSocketSession = WechatHandler.WECHAT_MAP.get(wssId);
-                JSONArray jsonArray = new JSONArray(list);
-                synchronized (webSocketSession) {
-                    try {
-                        webSocketSession.sendMessage(new TextMessage(jsonArray.toString()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @Async("DialogUpdateExecutor")
     public void asyncDialogUpdate(JSONObject jsonObject) {
         try {

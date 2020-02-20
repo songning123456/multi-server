@@ -1,6 +1,6 @@
 package com.simple.blog.controller;
 
-import com.sn.common.annotation.ControllerAspectAnnotation;
+import com.sn.common.annotation.AControllerAspect;
 import com.simple.blog.dto.LikeTagDTO;
 import com.simple.blog.service.LikeTagService;
 import com.simple.blog.vo.LikeTagVO;
@@ -27,7 +27,7 @@ public class LikeTagController {
     private LikeTagService likeTagService;
 
     @PostMapping("/updateTag")
-    @ControllerAspectAnnotation(description = "修改标签")
+    @AControllerAspect(description = "修改标签")
     public CommonDTO<LikeTagDTO> updateTags(@RequestBody CommonVO<LikeTagVO> commonVO) {
         CommonDTO<LikeTagDTO> commonDTO = likeTagService.updateTag(commonVO);
         return commonDTO;

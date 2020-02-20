@@ -39,24 +39,6 @@ public class ThreadConfig {
     }
 
     /**
-     * 查询wechat会话信息的线程池
-     * @return
-     */
-    @Bean(name = "DialogSelectExecutor")
-    public Executor dialogSelectExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(this.corePoolSize);
-        executor.setMaxPoolSize(this.maxPoolSize);
-        executor.setQueueCapacity(this.queueCapacity);
-        executor.setKeepAliveSeconds(this.keepAliveSecond);
-        executor.setThreadNamePrefix(this.threadNamePrefix);
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.setWaitForTasksToCompleteOnShutdown(true);
-        executor.setAwaitTerminationSeconds(this.awaitTerminationSeconds);
-        return executor;
-    }
-
-    /**
      * 更新wechat会话的线程池
      * @return
      */

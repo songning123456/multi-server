@@ -1,6 +1,6 @@
 package com.sn.common.aop;
 
-import com.sn.common.annotation.ControllerAspectAnnotation;
+import com.sn.common.annotation.AControllerAspect;
 import com.sn.common.constant.HttpStatus;
 import com.sn.common.dto.CommonDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 @Slf4j
 public class ControllerAspectAop {
 
-    @Pointcut("@annotation(com.sn.common.annotation.ControllerAspectAnnotation)")
+    @Pointcut("@annotation(com.sn.common.annotation.AControllerAspect)")
     public void controllerAspect() {
 
     }
@@ -88,7 +88,7 @@ public class ControllerAspectAop {
             if (method.getName().equals(methodName)) {
                 Class[] clazz = method.getParameterTypes();
                 if (clazz.length == arguments.length) {
-                    description.append(method.getAnnotation(ControllerAspectAnnotation.class).description());
+                    description.append(method.getAnnotation(AControllerAspect.class).description());
                     break;
                 }
             }

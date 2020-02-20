@@ -1,6 +1,6 @@
 package com.simple.blog.controller;
 
-import com.sn.common.annotation.ControllerAspectAnnotation;
+import com.sn.common.annotation.AControllerAspect;
 import com.simple.blog.service.CacheService;
 import com.simple.blog.util.HttpServletRequestUtil;
 import com.simple.blog.vo.CacheVO;
@@ -29,7 +29,7 @@ public class CacheController {
     private HttpServletRequestUtil httpServletRequestUtil;
 
     @PostMapping("/refresh")
-    @ControllerAspectAnnotation(description = "刷新缓存")
+    @AControllerAspect(description = "刷新缓存")
     public <T> CommonDTO<T> refreshCaches(@RequestBody CommonVO<CacheVO> commonVO) throws Exception {
         boolean systemConfig = commonVO.getCondition().getSystemConfig();
         boolean labelConfig = commonVO.getCondition().getLabelConfig();

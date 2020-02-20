@@ -3,7 +3,7 @@ package com.simple.blog.controller;
 import com.simple.blog.dto.VideoDTO;
 import com.simple.blog.service.VideoService;
 import com.simple.blog.vo.VideoVO;
-import com.sn.common.annotation.ControllerAspectAnnotation;
+import com.sn.common.annotation.AControllerAspect;
 import com.sn.common.dto.CommonDTO;
 import com.sn.common.vo.CommonVO;
 import lombok.extern.slf4j.Slf4j;
@@ -27,28 +27,28 @@ public class VideoController {
     private VideoService videoService;
 
     @PostMapping("/getVideo")
-    @ControllerAspectAnnotation(description = "获取视频")
+    @AControllerAspect(description = "获取视频")
     public CommonDTO<VideoDTO> getVideos(@RequestBody CommonVO<VideoVO> commonVO) {
         CommonDTO<VideoDTO> commonDTO = videoService.getVideo(commonVO);
         return commonDTO;
     }
 
     @GetMapping("/isExist")
-    @ControllerAspectAnnotation(description = "根据文件名判断是否存在")
+    @AControllerAspect(description = "根据文件名判断是否存在")
     public CommonDTO<Integer> isExists(@RequestParam("md5") String md5) {
         CommonDTO<Integer> commonDTO = videoService.isExist(md5);
         return commonDTO;
     }
 
     @GetMapping("/shardMerge")
-    @ControllerAspectAnnotation(description = "合并分片")
+    @AControllerAspect(description = "合并分片")
     public CommonDTO<VideoDTO> shardMerges(@RequestParam("md5") String md5, @RequestParam("filename") String filename) {
         CommonDTO<VideoDTO> commonDTO = videoService.shardMerge(md5, filename);
         return commonDTO;
     }
 
     @PostMapping("/shardUpload")
-    @ControllerAspectAnnotation(description = "分片上传")
+    @AControllerAspect(description = "分片上传")
     public CommonDTO<VideoDTO> shardUploads(@RequestParam("file") MultipartFile multipartFile,
                                             @RequestParam("md5") String md5,
                                             @RequestParam("filename") String filename,

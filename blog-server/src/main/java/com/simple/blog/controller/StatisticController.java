@@ -1,6 +1,6 @@
 package com.simple.blog.controller;
 
-import com.sn.common.annotation.ControllerAspectAnnotation;
+import com.sn.common.annotation.AControllerAspect;
 import com.simple.blog.dto.StatisticDTO;
 import com.simple.blog.service.StatisticService;
 import com.simple.blog.vo.StatisticVO;
@@ -27,7 +27,7 @@ public class StatisticController {
     private StatisticService statisticService;
 
     @PostMapping("/hadoop")
-    @ControllerAspectAnnotation(description = "数据统计")
+    @AControllerAspect(description = "数据统计")
     public CommonDTO<StatisticDTO> getHadoop(@RequestBody CommonVO<StatisticVO> commonVO) {
         CommonDTO<StatisticDTO> commonDTO = statisticService.getStatisticResult(commonVO);
         return commonDTO;

@@ -1,6 +1,6 @@
 package com.simple.blog.controller;
 
-import com.sn.common.annotation.ControllerAspectAnnotation;
+import com.sn.common.annotation.AControllerAspect;
 import com.simple.blog.dto.ThirdPartDTO;
 import com.simple.blog.service.ThirdPartService;
 import com.simple.blog.vo.ThirdPartVO;
@@ -27,7 +27,7 @@ public class ThirdPartController {
     private ThirdPartService thirdPartService;
 
     @PostMapping("/gitHub")
-    @ControllerAspectAnnotation(description = "获取github用户数据")
+    @AControllerAspect(description = "获取github用户数据")
     public CommonDTO<ThirdPartDTO> getGitHubs(@RequestBody CommonVO<ThirdPartVO> commonVO) {
         CommonDTO<ThirdPartDTO> commonDTO = thirdPartService.getGitHub(commonVO);
         return commonDTO;

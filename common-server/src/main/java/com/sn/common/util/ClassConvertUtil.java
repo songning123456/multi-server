@@ -1,8 +1,10 @@
 package com.sn.common.util;
 
+import com.sn.common.annotation.AClassConvertIgnore;
 import com.sn.common.util.classconvert.ClassConvertContext;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -29,10 +31,18 @@ public class ClassConvertUtil {
             if (srcMethodName.startsWith("get")) {
                 try {
                     Object result = srcMethod.invoke(src);
+                    // 根据方法名获取字段，然后获取字段上的注解
+                    String fieldName = srcMethodName.substring(3, 4).toLowerCase() + srcMethodName.substring(4);
+                    Field field = src.getClass().getDeclaredField(fieldName);
+                    AClassConvertIgnore aClassConvertIgnore = field.getAnnotation(AClassConvertIgnore.class);
                     // 获取 get 方法返回值类型
                     Class<?> srcConvertClass = srcMethod.getReturnType();
 
                     for (Method targetMethod : targetMethods) {
+                        // 如果某个字段存在此注解，则跳过转换
+                        if (aClassConvertIgnore != null) {
+                            continue;
+                        }
                         String targetMethodName = targetMethod.getName();
                         if (targetMethodName.startsWith("set") && targetMethodName.substring(3).equals(srcMethodName.substring(3))) {
                             // 获取 set 方法 参数类型

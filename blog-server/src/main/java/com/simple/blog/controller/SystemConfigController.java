@@ -1,6 +1,6 @@
 package com.simple.blog.controller;
 
-import com.sn.common.annotation.ControllerAspectAnnotation;
+import com.sn.common.annotation.AControllerAspect;
 import com.simple.blog.dto.SystemConfigDTO;
 import com.simple.blog.service.SystemConfigService;
 import com.simple.blog.vo.SystemConfigVO;
@@ -27,14 +27,14 @@ public class SystemConfigController {
     private SystemConfigService systemConfigService;
 
     @PostMapping("/getLike")
-    @ControllerAspectAnnotation(description = "模糊查询系统配置")
+    @AControllerAspect(description = "模糊查询系统配置")
     public CommonDTO<SystemConfigDTO> getLikeSystemConfig(@RequestBody CommonVO<SystemConfigVO> commonVO) {
         CommonDTO<SystemConfigDTO> commonDTO = systemConfigService.getSystemConfig(commonVO);
         return commonDTO;
     }
 
     @PostMapping("/update")
-    @ControllerAspectAnnotation(description = "更新系统配置")
+    @AControllerAspect(description = "更新系统配置")
     public <T> CommonDTO<T> updateSystemConfig(@RequestBody CommonVO<SystemConfigVO> commonVO) {
         CommonDTO<T> commonDTO = systemConfigService.updateSystemConfig(commonVO);
         return commonDTO;

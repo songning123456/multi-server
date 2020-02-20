@@ -1,6 +1,6 @@
 package com.simple.blog.controller;
 
-import com.sn.common.annotation.ControllerAspectAnnotation;
+import com.sn.common.annotation.AControllerAspect;
 import com.simple.blog.dto.RegisterDTO;
 import com.simple.blog.service.RegisterService;
 import com.simple.blog.vo.RegisterVO;
@@ -27,7 +27,7 @@ public class RegisterController {
     private RegisterService registerService;
 
     @PostMapping("/all")
-    @ControllerAspectAnnotation(description = "注册users, system-config, blogger, labelRelation表")
+    @AControllerAspect(description = "注册users, system-config, blogger, labelRelation表")
     public CommonDTO<RegisterDTO> registerAll(@RequestBody CommonVO<RegisterVO> commonVO) {
         CommonDTO<RegisterDTO> commonDTO = registerService.registerAll(commonVO);
         return commonDTO;

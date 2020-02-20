@@ -1,6 +1,6 @@
 package com.simple.blog.controller;
 
-import com.sn.common.annotation.ControllerAspectAnnotation;
+import com.sn.common.annotation.AControllerAspect;
 import com.simple.blog.dto.ImageDTO;
 import com.simple.blog.service.ImageService;
 import com.simple.blog.vo.ImageVO;
@@ -32,28 +32,28 @@ public class ImageController {
     private ImageService imageService;
 
     @PostMapping("/save")
-    @ControllerAspectAnnotation(description = "把上传的图片保存")
+    @AControllerAspect(description = "把上传的图片保存")
     public CommonDTO<ImageDTO> saveImages(@RequestParam("file") MultipartFile multipartFile, @RequestParam("dir") String dir) {
         CommonDTO<ImageDTO> commonDTO = imageService.saveImage(multipartFile, dir);
         return commonDTO;
     }
 
     @PostMapping("/saveAlbum")
-    @ControllerAspectAnnotation(description = "上传图片 保存到数据库")
+    @AControllerAspect(description = "上传图片 保存到数据库")
     public CommonDTO<ImageDTO> saveAlbums(@RequestParam("file") MultipartFile multipartFile, @RequestParam("dir") String dir) {
         CommonDTO<ImageDTO> commonDTO = imageService.saveAlbum(multipartFile, dir);
         return commonDTO;
     }
 
     @PostMapping("/getAlbum")
-    @ControllerAspectAnnotation(description = "获取相册")
+    @AControllerAspect(description = "获取相册")
     public CommonDTO<ImageDTO> getAlbums(@RequestBody CommonVO<ImageVO> commonVO) {
         CommonDTO<ImageDTO> commonDTO = imageService.getAlbum(commonVO);
         return commonDTO;
     }
 
     @PostMapping("/delete")
-    @ControllerAspectAnnotation(description = "删除指定位置图片")
+    @AControllerAspect(description = "删除指定位置图片")
     public <T> CommonDTO<T> deleteImages(@RequestBody CommonVO<ImageVO> commonVO) {
         CommonDTO<T> commonDTO = imageService.deleteImage(commonVO);
         return commonDTO;

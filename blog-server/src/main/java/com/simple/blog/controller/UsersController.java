@@ -1,6 +1,6 @@
 package com.simple.blog.controller;
 
-import com.sn.common.annotation.ControllerAspectAnnotation;
+import com.sn.common.annotation.AControllerAspect;
 import com.simple.blog.dto.UsersDTO;
 import com.simple.blog.service.UsersService;
 import com.simple.blog.vo.UsersVO;
@@ -25,21 +25,21 @@ public class UsersController {
     private UsersService usersService;
 
     @PostMapping("/exist")
-    @ControllerAspectAnnotation(description = "获取标签")
+    @AControllerAspect(description = "获取标签")
     public CommonDTO<UsersDTO> judgeIsExist(@RequestBody CommonVO<UsersVO> commonVO) {
         CommonDTO<UsersDTO> commonDTO = usersService.isExist(commonVO);
         return commonDTO;
     }
 
     @PostMapping("/modify")
-    @ControllerAspectAnnotation(description = "修改用户密码")
+    @AControllerAspect(description = "修改用户密码")
     public CommonDTO<UsersDTO> modifyPasswords(@RequestBody CommonVO<UsersVO> commonVO) {
         CommonDTO<UsersDTO> commonDTO = usersService.modifyPassword(commonVO);
         return commonDTO;
     }
 
     @PostMapping("/getPermission")
-    @ControllerAspectAnnotation(description = "获取权限")
+    @AControllerAspect(description = "获取权限")
     public CommonDTO<UsersDTO> getPermissions(@RequestBody CommonVO<UsersVO> commonVO) {
         CommonDTO<UsersDTO> commonDTO = usersService.getPermission(commonVO);
         return commonDTO;

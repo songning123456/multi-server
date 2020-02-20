@@ -54,8 +54,6 @@ public class WechatHandler implements org.springframework.web.socket.WebSocketHa
                 if (jsonObject.size() == 2) {
                     // 说明是准备获取所有在线人数
                     wechatProcessor.asyncOnlineTotal(jsonObject);
-                    // 获取会话信息
-                    wechatProcessor.asyncDialogSelect(webSocketSession.getId());
                 } else if (jsonObject.size() == 5) {
                     wechatProcessor.asyncDialogUpdate(jsonObject);
                     // 消息发布
