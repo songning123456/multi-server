@@ -1,14 +1,21 @@
 package com.simple.blog.websocket.handler;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.simple.blog.thread.WechatProcessor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 
 /**
  * @author songning
@@ -26,6 +33,9 @@ public class WechatHandler implements org.springframework.web.socket.WebSocketHa
         WECHAT_MAP = new ConcurrentHashMap<>();
     }
 
+    @Autowired
+    private WechatProcessor wechatProcessor;
+
     @Override
     public void afterConnectionEstablished(WebSocketSession webSocketSession) {
         log.info("webSocket打开: {}", webSocketSession.getId());
@@ -36,16 +46,44 @@ public class WechatHandler implements org.springframework.web.socket.WebSocketHa
     public void handleMessage(WebSocketSession webSocketSession, WebSocketMessage<?> webSocketMessage) {
         try {
             String payloadStr = webSocketMessage.getPayload().toString();
+            // 心跳连接
             if (PING.equals(payloadStr)) {
                 webSocketSession.sendMessage(new TextMessage(PONG));
             } else {
-                for (Map.Entry<String, WebSocketSession> entry : WECHAT_MAP.entrySet()) {
-                    WebSocketSession wss = entry.getValue();
-                    if (wss.isOpen()) {
-                        try {
-                            wss.sendMessage(new TextMessage(payloadStr));
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                JSONObject jsonObject = JSON.parseObject(payloadStr);
+                if (jsonObject.size() == 2) {
+                    // 说明是准备获取所有在线人数
+                    Future<List<Map<String, Object>>> future = wechatProcessor.asyncOnlineWechat(jsonObject);
+                    while (true) {
+                        if (future.isDone()) {
+                            break;
+                        }
+                    }
+                    List<Map<String, Object>> list = future.get();
+                    JSONArray jsonArray = new JSONArray(list);
+                    for (Map.Entry<String, WebSocketSession> entry : WECHAT_MAP.entrySet()) {
+                        WebSocketSession wss = entry.getValue();
+                        synchronized (wss) {
+                            if (wss.isOpen()) {
+                                try {
+                                    wss.sendMessage(new TextMessage(jsonArray.toString()));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                } else if (jsonObject.size() == 5) {
+                    wechatProcessor.asyncUpdateDialog(jsonObject);
+                    // 消息发布
+                    for (Map.Entry<String, WebSocketSession> entry : WECHAT_MAP.entrySet()) {
+                        WebSocketSession wss = entry.getValue();
+                        if (wss.isOpen()) {
+                            try {
+                                wss.sendMessage(new TextMessage(payloadStr));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }

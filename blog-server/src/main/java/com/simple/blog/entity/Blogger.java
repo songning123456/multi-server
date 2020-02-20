@@ -59,4 +59,7 @@ public class Blogger {
 
     @Column(name = "userId", columnDefinition = "VARCHAR(60) COMMENT '用户ID'")
     private String userId;
+
+    @Column(name = "online", columnDefinition = "Int(2) default 0 COMMENT '是否在线'")
+    private Integer online;
 }
