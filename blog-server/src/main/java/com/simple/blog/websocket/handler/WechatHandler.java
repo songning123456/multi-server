@@ -53,28 +53,11 @@ public class WechatHandler implements org.springframework.web.socket.WebSocketHa
                 JSONObject jsonObject = JSON.parseObject(payloadStr);
                 if (jsonObject.size() == 2) {
                     // 说明是准备获取所有在线人数
-                    Future<List<Map<String, Object>>> future = wechatProcessor.asyncOnlineWechat(jsonObject);
-                    while (true) {
-                        if (future.isDone()) {
-                            break;
-                        }
-                    }
-                    List<Map<String, Object>> list = future.get();
-                    JSONArray jsonArray = new JSONArray(list);
-                    for (Map.Entry<String, WebSocketSession> entry : WECHAT_MAP.entrySet()) {
-                        WebSocketSession wss = entry.getValue();
-                        synchronized (wss) {
-                            if (wss.isOpen()) {
-                                try {
-                                    wss.sendMessage(new TextMessage(jsonArray.toString()));
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
+                    wechatProcessor.asyncOnlineTotal(jsonObject);
+                    // 获取会话信息
+                    wechatProcessor.asyncDialogSelect(webSocketSession.getId());
                 } else if (jsonObject.size() == 5) {
-                    wechatProcessor.asyncUpdateDialog(jsonObject);
+                    wechatProcessor.asyncDialogUpdate(jsonObject);
                     // 消息发布
                     for (Map.Entry<String, WebSocketSession> entry : WECHAT_MAP.entrySet()) {
                         WebSocketSession wss = entry.getValue();

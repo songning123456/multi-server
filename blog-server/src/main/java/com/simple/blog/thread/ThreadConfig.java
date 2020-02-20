@@ -20,8 +20,12 @@ public class ThreadConfig {
     private String threadNamePrefix = "WechatAsync_";
     private Integer awaitTerminationSeconds = 60;
 
-    @Bean(name = "WechatExecutor")
-    public Executor wechatExecutor() {
+    /**
+     * 获取 当前在线blogger 的线程池
+     * @return
+     */
+    @Bean(name = "OnlineTotalExecutor")
+    public Executor onlineTotalExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(this.corePoolSize);
         executor.setMaxPoolSize(this.maxPoolSize);
@@ -34,8 +38,30 @@ public class ThreadConfig {
         return executor;
     }
 
-    @Bean(name = "WechatDialogExecutor")
-    public Executor WechatDialogExecutor() {
+    /**
+     * 查询wechat会话信息的线程池
+     * @return
+     */
+    @Bean(name = "DialogSelectExecutor")
+    public Executor dialogSelectExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(this.corePoolSize);
+        executor.setMaxPoolSize(this.maxPoolSize);
+        executor.setQueueCapacity(this.queueCapacity);
+        executor.setKeepAliveSeconds(this.keepAliveSecond);
+        executor.setThreadNamePrefix(this.threadNamePrefix);
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAwaitTerminationSeconds(this.awaitTerminationSeconds);
+        return executor;
+    }
+
+    /**
+     * 更新wechat会话的线程池
+     * @return
+     */
+    @Bean(name = "DialogUpdateExecutor")
+    public Executor dialogUpdateExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(this.corePoolSize);
         executor.setMaxPoolSize(this.maxPoolSize);
