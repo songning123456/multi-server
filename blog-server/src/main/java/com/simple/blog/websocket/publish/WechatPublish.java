@@ -26,11 +26,9 @@ public class WechatPublish {
 
     /**
      * 通知 在线人数信息
-     *
-     * @param online
      */
-    public void publish(Integer online) {
-        List<Map<String, Object>> list = bloggerRepository.findByOnlineNative(online);
+    public void publish() {
+        List<Map<String, Object>> list = bloggerRepository.findByOnlineNative();
         JSONArray jsonArray = new JSONArray(list);
         for (Map.Entry<String, WebSocketSession> entry : WechatHandler.WECHAT_MAP.entrySet()) {
             WebSocketSession wss = entry.getValue();

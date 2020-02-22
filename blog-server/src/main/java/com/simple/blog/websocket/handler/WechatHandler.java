@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.simple.blog.thread.WechatProcessor;
 import com.simple.blog.websocket.publish.WechatPublish;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -13,10 +12,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
 
 /**
  * @author songning
@@ -80,13 +77,13 @@ public class WechatHandler implements org.springframework.web.socket.WebSocketHa
     @Override
     public void handleTransportError(WebSocketSession webSocketSession, Throwable throwable) {
         WECHAT_MAP.remove(webSocketSession.getId());
-        wechatPublish.publish(1);
+        wechatPublish.publish();
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus) {
         WECHAT_MAP.remove(webSocketSession.getId());
-        wechatPublish.publish(1);
+        wechatPublish.publish();
     }
 
     @Override

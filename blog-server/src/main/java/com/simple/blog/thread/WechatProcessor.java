@@ -4,19 +4,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.simple.blog.entity.WechatDialog;
 import com.simple.blog.repository.BloggerRepository;
 import com.simple.blog.repository.WechatDialogRepository;
-import com.simple.blog.websocket.handler.WechatHandler;
 import com.simple.blog.websocket.publish.WechatPublish;
 import com.sn.common.util.DateUtil;
-import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author: songning
@@ -38,7 +32,7 @@ public class WechatProcessor {
             String userId = jsonObject.get("userId").toString();
             int online = Integer.parseInt(jsonObject.get("online").toString());
             bloggerRepository.updateByUserIdAndOnlineNative(userId, online);
-            wechatPublish.publish(online);
+            wechatPublish.publish();
         } catch (Exception e) {
             e.printStackTrace();
         }
