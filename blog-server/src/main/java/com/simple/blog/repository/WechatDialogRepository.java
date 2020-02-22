@@ -14,6 +14,6 @@ import java.util.List;
 @Repository
 public interface WechatDialogRepository extends JpaRepository<WechatDialog, String> {
 
-    @Query(value = "select * from wechat_dialog", nativeQuery = true)
-    List<WechatDialog> findNative();
+    @Query(value = "select * from wechat_dialog order by update_time asc limit ?1,?2", nativeQuery = true)
+    List<WechatDialog> findLimitNative(int offset, int size);
 }
