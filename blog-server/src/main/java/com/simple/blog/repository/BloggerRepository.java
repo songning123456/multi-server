@@ -49,6 +49,11 @@ public interface BloggerRepository extends JpaRepository<Blogger, String> {
     @Query(value = "update blogger set online = ?2 where user_id = ?1", nativeQuery = true)
     void updateByUserIdAndOnlineNative(String userId, Integer online);
 
+    @Modifying
+    @Transactional
+    @Query(value = "update blogger set online = ?2 where username = ?1", nativeQuery = true)
+    void updateByUsernameAndOnlineNative(String username, Integer online);
+
     @Query(value = "select user_id as userId, online,head_portrait as headPortrait, author from blogger where online = ?1", nativeQuery = true)
     List<Map<String, Object>> findByOnlineNative(Integer online);
 }

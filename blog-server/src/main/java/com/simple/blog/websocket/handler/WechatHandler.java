@@ -3,6 +3,7 @@ package com.simple.blog.websocket.handler;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.simple.blog.thread.WechatProcessor;
+import com.simple.blog.websocket.publish.WechatPublish;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class WechatHandler implements org.springframework.web.socket.WebSocketHa
 
     @Autowired
     private WechatProcessor wechatProcessor;
+    @Autowired
+    private WechatPublish wechatPublish;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession webSocketSession) {
@@ -77,11 +80,13 @@ public class WechatHandler implements org.springframework.web.socket.WebSocketHa
     @Override
     public void handleTransportError(WebSocketSession webSocketSession, Throwable throwable) {
         WECHAT_MAP.remove(webSocketSession.getId());
+        wechatPublish.publish(1);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus) {
         WECHAT_MAP.remove(webSocketSession.getId());
+        wechatPublish.publish(1);
     }
 
     @Override

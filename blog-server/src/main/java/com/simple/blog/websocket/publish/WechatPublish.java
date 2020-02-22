@@ -1,10 +1,15 @@
 package com.simple.blog.websocket.publish;
 
+import com.simple.blog.repository.BloggerRepository;
 import com.simple.blog.websocket.handler.WechatHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,8 +21,28 @@ import java.util.Map;
 @Slf4j
 public class WechatPublish {
 
-    private Map<String, WebSocketSession> wechatMap = WechatHandler.WECHAT_MAP;
+    @Autowired
+    private BloggerRepository bloggerRepository;
 
-    public void send() {
+    /**
+     * 通知 在线人数信息
+     *
+     * @param online
+     */
+    public void publish(Integer online) {
+        List<Map<String, Object>> list = bloggerRepository.findByOnlineNative(online);
+        JSONArray jsonArray = new JSONArray(list);
+        for (Map.Entry<String, WebSocketSession> entry : WechatHandler.WECHAT_MAP.entrySet()) {
+            WebSocketSession wss = entry.getValue();
+            synchronized (wss) {
+                if (wss.isOpen()) {
+                    try {
+                        wss.sendMessage(new TextMessage(jsonArray.toString()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 }

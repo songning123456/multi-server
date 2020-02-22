@@ -5,6 +5,7 @@ import com.simple.blog.entity.WechatDialog;
 import com.simple.blog.repository.BloggerRepository;
 import com.simple.blog.repository.WechatDialogRepository;
 import com.simple.blog.websocket.handler.WechatHandler;
+import com.simple.blog.websocket.publish.WechatPublish;
 import com.sn.common.util.DateUtil;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ public class WechatProcessor {
     private BloggerRepository bloggerRepository;
     @Autowired
     private WechatDialogRepository wechatDialogRepository;
+    @Autowired
+    private WechatPublish wechatPublish;
 
     @Async("OnlineTotalExecutor")
     public void asyncOnlineTotal(JSONObject jsonObject) {
@@ -35,20 +38,7 @@ public class WechatProcessor {
             String userId = jsonObject.get("userId").toString();
             int online = Integer.parseInt(jsonObject.get("online").toString());
             bloggerRepository.updateByUserIdAndOnlineNative(userId, online);
-            List<Map<String, Object>> list = bloggerRepository.findByOnlineNative(online);
-            JSONArray jsonArray = new JSONArray(list);
-            for (Map.Entry<String, WebSocketSession> entry : WechatHandler.WECHAT_MAP.entrySet()) {
-                WebSocketSession wss = entry.getValue();
-                synchronized (wss) {
-                    if (wss.isOpen()) {
-                        try {
-                            wss.sendMessage(new TextMessage(jsonArray.toString()));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
+            wechatPublish.publish(online);
         } catch (Exception e) {
             e.printStackTrace();
         }

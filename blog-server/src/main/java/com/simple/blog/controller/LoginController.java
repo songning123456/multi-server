@@ -1,9 +1,12 @@
 package com.simple.blog.controller;
 
+import com.simple.blog.repository.BloggerRepository;
+import com.simple.blog.util.HttpServletRequestUtil;
 import com.sn.common.annotation.AControllerAspect;
 import com.sn.common.constant.HttpStatus;
 import com.sn.common.dto.CommonDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +22,11 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @RestController
 public class LoginController {
+
+    @Autowired
+    private HttpServletRequestUtil httpServletRequestUtil;
+    @Autowired
+    private BloggerRepository bloggerRepository;
 
     /**
      * 无需登陆
@@ -70,6 +78,12 @@ public class LoginController {
     @AControllerAspect(description = "注销登录成功后跳转的路由")
     public <T> CommonDTO<T> logoutSuccess() {
         CommonDTO<T> commonDTO = new CommonDTO<>();
+        try {
+            String username = httpServletRequestUtil.getUsername();
+            bloggerRepository.updateByUsernameAndOnlineNative(username, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         commonDTO.setMessage("退出成功");
         return commonDTO;
     }
