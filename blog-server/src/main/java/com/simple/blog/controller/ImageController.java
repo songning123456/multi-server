@@ -38,20 +38,6 @@ public class ImageController {
         return commonDTO;
     }
 
-    @PostMapping("/saveAlbum")
-    @AControllerAspect(description = "上传图片 保存到数据库")
-    public CommonDTO<ImageDTO> saveAlbums(@RequestParam("file") MultipartFile multipartFile, @RequestParam("dir") String dir) {
-        CommonDTO<ImageDTO> commonDTO = imageService.saveAlbum(multipartFile, dir);
-        return commonDTO;
-    }
-
-    @PostMapping("/getAlbum")
-    @AControllerAspect(description = "获取相册")
-    public CommonDTO<ImageDTO> getAlbums(@RequestBody CommonVO<ImageVO> commonVO) {
-        CommonDTO<ImageDTO> commonDTO = imageService.getAlbum(commonVO);
-        return commonDTO;
-    }
-
     @PostMapping("/delete")
     @AControllerAspect(description = "删除指定位置图片")
     public <T> CommonDTO<T> deleteImages(@RequestBody CommonVO<ImageVO> commonVO) {

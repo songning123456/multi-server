@@ -31,9 +31,7 @@ server:
 
 blog:
   es.url: http://localhost:8074/
-  image:
-    path: simple-blog
-  video:
+  file:
     path: simple-blog
 
 logging:

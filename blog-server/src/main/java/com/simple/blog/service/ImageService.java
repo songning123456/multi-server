@@ -19,9 +19,5 @@ public interface ImageService {
      */
     CommonDTO<ImageDTO> saveImage(MultipartFile multipartFile, String dir);
 
-    CommonDTO<ImageDTO> saveAlbum(MultipartFile multipartFile, String dir);
-
-    CommonDTO<ImageDTO> getAlbum(CommonVO<ImageVO> commonVO);
-
     <T> CommonDTO<T> deleteImage(CommonVO<ImageVO> commonVO);
 }
