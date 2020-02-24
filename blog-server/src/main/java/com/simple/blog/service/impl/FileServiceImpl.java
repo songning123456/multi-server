@@ -149,6 +149,11 @@ public class FileServiceImpl implements FileService {
             Date updateTime = new Date(mergeFile.lastModified());
             File file = File.builder().fileType(fileType).fileName(fileName).fileSrc(fileSrc).coverSrc(coverSrc).updateTime(updateTime).userId(userId).username(username).build();
             fileRepository.save(file);
+        } else if (CommonConstant.MUSIC.equals(fileType)) {
+            String userId = usersRepository.findUserIdByNameNative(username);
+            Date updateTime = new Date(mergeFile.lastModified());
+            File file = File.builder().fileType(fileType).fileName(fileName).updateTime(updateTime).userId(userId).username(username).build();
+            fileRepository.save(file);
         }
         return commonDTO;
     }

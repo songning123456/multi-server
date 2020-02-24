@@ -46,6 +46,7 @@ public class CommonConstant {
     public static final String Image = "image";
     public static final String AVATAR = "avatar";
     public static final String VIDEO = "video";
+    public static final String MUSIC = "music";
 
     public static final String CHUNK_SUFFIX = ".chunk";
 }
