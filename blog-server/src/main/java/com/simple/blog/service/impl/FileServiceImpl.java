@@ -152,7 +152,8 @@ public class FileServiceImpl implements FileService {
         } else if (CommonConstant.MUSIC.equals(fileType)) {
             String userId = usersRepository.findUserIdByNameNative(username);
             Date updateTime = new Date(mergeFile.lastModified());
-            File file = File.builder().fileType(fileType).fileName(fileName).updateTime(updateTime).userId(userId).username(username).build();
+            String fileSrc = dirPath + java.io.File.separator + fileName;
+            File file = File.builder().fileType(fileType).fileSrc(fileSrc).fileName(fileName).updateTime(updateTime).userId(userId).username(username).build();
             fileRepository.save(file);
         }
         return commonDTO;
@@ -163,7 +164,7 @@ public class FileServiceImpl implements FileService {
         CommonDTO<FileDTO> commonDTO = new CommonDTO<>();
         String username = httpServletRequestUtil.getUsername();
         String userId = usersRepository.findUserIdByNameNative(username);
-        if (CommonConstant.Image.equals(fileType)) {
+        if (CommonConstant.IMAGE.equals(fileType)) {
             String fileSrc = this.savePicture(multipartFile, fileType, username);
             String fileName = multipartFile.getOriginalFilename().split("\\.")[0];
             Date updateTime = new Date(new java.io.File(fileSrc).lastModified());

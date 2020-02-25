@@ -43,7 +43,7 @@ public class CommonConstant {
     /**
      * 保存的目录 album => 保存图片, avatar => 保存头像, video => 保存视频
      */
-    public static final String Image = "image";
+    public static final String IMAGE = "image";
     public static final String AVATAR = "avatar";
     public static final String VIDEO = "video";
     public static final String MUSIC = "music";

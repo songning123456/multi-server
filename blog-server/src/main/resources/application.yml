@@ -28,6 +28,8 @@ spring:
 #配置端口号
 server:
   port: 8072
+  tomcat:
+    max-connections: 30000
 
 blog:
   es.url: http://localhost:8074/
