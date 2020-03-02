@@ -18,3 +18,4 @@
 ```
 
 `systemctl restart nginx.service` // 修改配置文件后重启nginx
+`nginx -s reload` // 修改配置文件后刷新nginx
