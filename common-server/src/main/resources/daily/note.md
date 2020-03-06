@@ -14,3 +14,6 @@
 #### 浏览器转为编辑器
 ` document.body.contentEditable = true `
 
+#### vue-cli 使用 webpack-bundle-analyzer
+`运行下npm run build --report  浏览器访问 http://127.0.0.1:8888`
+
