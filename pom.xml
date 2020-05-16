@@ -21,6 +21,7 @@
         <module>common-server</module>
         <module>blog-es-server</module>
         <module>jpql-server</module>
+        <module>uni-dubbo</module>
     </modules>
 
     <!--maven 默认使用Java5,设置成Java8-->
