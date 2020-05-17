@@ -34,7 +34,7 @@ import java.util.Map;
  */
 @Component
 @Configuration
-@EnableScheduling
+//@EnableScheduling
 @Slf4j
 public class CrawlerArticle {
 
@@ -68,8 +68,8 @@ public class CrawlerArticle {
     @Scheduled(cron = "0 0/20 * * * ?")
     public void theftArticle() {
         try {
-            this.theftNetSimple();
-            this.theftPhoenix();
+//            this.theftNetSimple();
+//            this.theftPhoenix();
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
