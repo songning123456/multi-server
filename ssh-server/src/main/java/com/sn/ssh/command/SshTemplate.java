@@ -63,6 +63,11 @@ public class SshTemplate {
         return connection;
     }
 
+    /**
+     * 关闭ssh connection连接
+     *
+     * @param connection
+     */
     private void close(Connection connection) {
         if (connection != null) {
             try {

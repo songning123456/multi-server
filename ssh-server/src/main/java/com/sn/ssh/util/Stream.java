@@ -23,7 +23,7 @@ public class Stream {
      * @return
      */
     public String getResult(InputStream inputStream) {
-        StringBuilder stringBuilder = new StringBuilder();
+        final StringBuilder stringBuilder = new StringBuilder();
         ILineProcessor iLineProcessor = new AbstractDefaultLineProcessor() {
             @Override
             public void process(String line, int lineNum) {
@@ -57,6 +57,7 @@ public class Stream {
                 }
                 lineNum++;
             }
+            iLineProcessor.finish();
         } catch (Exception e) {
             log.error("从流中获取内容失败: {}", e.getMessage());
         } finally {
