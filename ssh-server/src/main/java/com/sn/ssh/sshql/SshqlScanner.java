@@ -63,7 +63,6 @@ public class SshqlScanner {
             } catch (Exception e) {
                 log.error("error to load Sshql file {}", resource.getURI());
             }
-
         }
     }
 

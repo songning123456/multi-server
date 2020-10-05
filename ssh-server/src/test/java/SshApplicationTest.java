@@ -33,7 +33,7 @@ public class SshApplicationTest {
     @Test
     public void testSshql() {
         Map<String, Object> params = new HashMap<>(4);
-        params.put("author", "凌晨");
+        params.put("dir", "testSshDir");
         String sshql = sshqlParser.parse(new ParserParameter("testSshql.test1", params)).getExecutableSshql();
         log.info("sshql: {}", sshql);
     }

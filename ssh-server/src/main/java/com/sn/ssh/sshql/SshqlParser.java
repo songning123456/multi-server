@@ -42,7 +42,7 @@ public class SshqlParser {
     private SpelExpressionParser expressionParser = new SpelExpressionParser();
 
     public ParsedSshql parse(ParserParameter parserParameter) {
-        Sshql originalJpql = sshqlScanner.load(parserParameter.getId());
+        Sshql originalSshql = sshqlScanner.load(parserParameter.getId());
         VelocityContext velocityContext = new VelocityContext();
 
         for (Map.Entry<String, Object> entry : parserParameter.getParameter().entrySet()) {
@@ -50,15 +50,15 @@ public class SshqlParser {
         }
         velocityContext.put("refs", sshqlScanner.getCachedSshql());
         StringWriter stringWriter = new StringWriter();
-        templateEngineHolder.getVelocityEngine().evaluate(velocityContext, stringWriter, "sshql", originalJpql.getSshql());
+        templateEngineHolder.getVelocityEngine().evaluate(velocityContext, stringWriter, "sshql", originalSshql.getSshql());
 
-        ParsedSshql jpql = new ParsedSshql();
-        BeanUtils.copyProperties(originalJpql, jpql);
-        jpql.setParsed(stringWriter.getBuffer().toString());
+        ParsedSshql sshql = new ParsedSshql();
+        BeanUtils.copyProperties(originalSshql, sshql);
+        sshql.setParsed(stringWriter.getBuffer().toString());
         Pattern pattern = Pattern.compile(":(" + "[\\p{Lu}\\P{InBASIC_LATIN}\\p{Alnum}._%\\[\\]$]+)", CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(jpql.getParsed());
+        Matcher matcher = pattern.matcher(sshql.getParsed());
         int i = 0;
-        String parsedJpql = jpql.getParsed();
+        String parsedSshql = sshql.getParsed();
         HashMap<String, Object> map = new HashMap<>(16);
         List<String> params = new ArrayList<>();
         while (matcher.find()) {
@@ -67,7 +67,7 @@ public class SshqlParser {
             int start = matcher.start(0);
             boolean inStr = false;
             for (int j = 0; j < start; j++) {
-                char c = parsedJpql.charAt(j);
+                char c = parsedSshql.charAt(j);
                 if (c == '\'') {
                     inStr = !inStr;
                 }
@@ -83,12 +83,11 @@ public class SshqlParser {
             String key = "argument" + (i++);
             StringBuilder value = new StringBuilder();
             prepareForLike(map, test, o, key, value);
-            //use replace all to replace the string
             paramMapping.put(param, key);
         }
-        jpql.setParsed(replaceParameter(jpql.getParsed(), paramMapping, pattern));
-        jpql.setParameterMap(map);
-        return jpql;
+        sshql.setParsed(replaceParameter(sshql.getParsed(), paramMapping, pattern));
+        sshql.setParameterMap(map);
+        return sshql;
     }
 
     private String replaceParameter(String parsed, Map<String, String> mapping, Pattern pattern) {
