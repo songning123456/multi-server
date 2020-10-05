@@ -72,7 +72,7 @@ public class SshSession {
     }
 
     public Result executeCommand(Session session, String cmd, int timeoutMillis, ILineProcessor iLineProcessor) throws Exception {
-        Future<Result> future = ThreadPool.threadPoolExecutor.submit(() -> {
+        Future<Result> future = ThreadPool.getThreadPoolExecutor().submit(() -> {
             session.execCommand(cmd);
             Stream stream = new Stream();
             // 如果客户端需要进行行处理，则直接进行回调

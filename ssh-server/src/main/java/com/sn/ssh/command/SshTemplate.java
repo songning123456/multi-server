@@ -7,12 +7,14 @@ import com.sn.ssh.enums.ConstantEnum;
 import com.sn.ssh.exception.SshException;
 import com.sn.ssh.service.ISshCallback;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 /**
  * @author sonin
  * @date 2020/10/1 10:33
  */
 @Slf4j
+@Component
 public class SshTemplate {
 
     /**
