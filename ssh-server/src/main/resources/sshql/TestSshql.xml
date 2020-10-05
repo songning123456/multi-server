@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ssh module="testSshql">
+    <sshql id="test1">
+        ls
+    </sshql>
+</ssh>

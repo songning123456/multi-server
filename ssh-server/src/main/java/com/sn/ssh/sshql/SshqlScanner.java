@@ -1,6 +1,5 @@
 package com.sn.ssh.sshql;
 
-import com.sn.ssh.entity.Sshql;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
@@ -19,8 +18,8 @@ import java.util.Map;
 
 /**
  * @author sonin
- * @date 2020/10/2 17:16
- **/
+ * @date 2020/10/05
+ */
 @Slf4j
 @Component
 public class SshqlScanner {

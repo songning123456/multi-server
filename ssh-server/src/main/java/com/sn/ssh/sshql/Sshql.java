@@ -1,10 +1,10 @@
-package com.sn.ssh.entity;
+package com.sn.ssh.sshql;
 
 import lombok.Data;
 
 /**
  * @author sonin
- * @date 2020/10/2 17:16
+ * @date 2020/10/05
  */
 @Data
 public class Sshql {
